@@ -7,6 +7,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import React, {useState} from 'react';
+import auth from '@react-native-firebase/auth';
 
 const Login = ({navigation}) => {
   const [value, setValue] = useState({
@@ -20,7 +21,8 @@ const Login = ({navigation}) => {
         value.email,
         value.password,
       );
-      navigation.replace('Home');
+      console.log(res);
+      navigation.navigate('Home');
     } catch (error) {
       console.log(error);
     }
@@ -51,7 +53,7 @@ const Login = ({navigation}) => {
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.4}
-        onPress={() => navigation.replace('Register')}>
+        onPress={() => navigation.navigate('Register')}>
         <Text style={styles.alreadyText}>Don't Have An Account?</Text>
       </TouchableOpacity>
     </SafeAreaView>
