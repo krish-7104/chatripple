@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   SafeAreaView,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -16,16 +17,24 @@ const Register = ({navigation}) => {
     name: '',
   });
 
-  const registerHandler = async () => {
-    try {
-      const res = await auth().createUserWithEmailAndPassword(
-        value.email,
-        value.password,
-      );
-      navigation.replace('Login');
-    } catch (error) {
-      console.log(error);
-    }
+  const registerHandler = () => {
+    auth()
+      .createUserWithEmailAndPassword(value.email, value.password)
+      .then(() => {
+        console.log('User account created & signed in!');
+        navigation.navigate('Home');
+      })
+      .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          ToastAndroid.show('Email Already In Use!', ToastAndroid.SHORT);
+        } else if (error.code === 'auth/invalid-email') {
+          ToastAndroid.show('Email Is Invalid!');
+        } else if (error.code === 'auth/weak-password') {
+          ToastAndroid.show('Weak Password!');
+        } else {
+          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+        }
+      });
   };
 
   return (

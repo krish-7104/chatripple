@@ -13,6 +13,7 @@ import {
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
+import PasswordReset from './Screens/PasswordReset';
 const App = () => {
   const Drawer = createDrawerNavigator();
   function CustomDrawerContent(props) {
@@ -43,6 +44,14 @@ const App = () => {
           }}
           name="Login"
           component={Login}
+        />
+        <Drawer.Screen
+          options={{
+            drawerItemStyle: {display: 'none'},
+            headerLeft: false,
+          }}
+          name="Password Reset"
+          component={PasswordReset}
         />
         <Drawer.Screen
           options={{

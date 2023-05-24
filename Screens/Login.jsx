@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   SafeAreaView,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -16,16 +17,26 @@ const Login = ({navigation}) => {
   });
 
   const loginHandler = async () => {
-    try {
-      const res = await auth().signInWithEmailAndPassword(
-        value.email,
-        value.password,
-      );
-      console.log(res);
-      navigation.navigate('Home');
-    } catch (error) {
-      console.log(error);
-    }
+    auth()
+      .signInWithEmailAndPassword(value.email, value.password)
+      .then(res => {
+        console.log(res);
+        navigation.navigate('Home');
+      })
+      .catch(error => {
+        if (
+          error.code === 'auth/wrong-password' ||
+          error.code === 'auth/user-not-found'
+        ) {
+          ToastAndroid.show('Invalid Credentials!', ToastAndroid.SHORT);
+        } else if (error.code === 'auth/too-many-requests') {
+          ToastAndroid.show('To Many Attempts, Try Later!');
+        } else if (error.code === 'auth/user-disabled') {
+          ToastAndroid.show('User Disabled! Contact Developer');
+        } else {
+          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+        }
+      });
   };
 
   return (
@@ -45,6 +56,11 @@ const Login = ({navigation}) => {
           style={styles.input}
         />
       </View>
+      <TouchableOpacity
+        activeOpacity={0.4}
+        onPress={() => navigation.navigate('Password Reset')}>
+        <Text style={styles.forgetText}>Forget Password?</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.btnCont}
         activeOpacity={0.4}
@@ -86,8 +102,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingBottom: 10,
     textAlign: 'right',
+    width: '100%',
     color: '#3266ff',
-    fontWeight: '700',
+    fontWeight: '600',
   },
   labelText: {
     marginBottom: 4,
