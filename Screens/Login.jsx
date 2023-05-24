@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 
 const Login = ({navigation}) => {
@@ -15,6 +15,14 @@ const Login = ({navigation}) => {
     email: '',
     password: '',
   });
+
+  const onAuthStateChanged = user => {
+    if (user) navigation.replace('Home');
+  };
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
 
   const loginHandler = async () => {
     auth()

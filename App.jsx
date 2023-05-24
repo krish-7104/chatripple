@@ -8,21 +8,24 @@ import PasswordReset from './Screens/PasswordReset';
 import Profile from './Screens/Profile';
 import Chat from './Screens/Chat';
 import AddFriend from './Screens/AddFriend';
+import {UserState} from './Context/context';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Reset Password" component={PasswordReset} />
-        <Stack.Screen name="My Profile" component={Profile} />
-        <Stack.Screen name="Chat" component={Chat} />
-        <Stack.Screen name="Add Friend" component={AddFriend} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserState>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="My Profile">
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="Reset Password" component={PasswordReset} />
+          <Stack.Screen name="My Profile" component={Profile} />
+          <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen name="Add Friend" component={AddFriend} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserState>
   );
 };
 

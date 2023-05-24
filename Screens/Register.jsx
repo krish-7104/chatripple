@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 const Register = ({navigation}) => {
   const [value, setValue] = useState({
@@ -16,6 +16,14 @@ const Register = ({navigation}) => {
     username: '',
     name: '',
   });
+
+  const onAuthStateChanged = user => {
+    if (user) navigation.replace('Home');
+  };
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
 
   const registerHandler = () => {
     auth()
