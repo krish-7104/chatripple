@@ -21,8 +21,7 @@ const Register = ({navigation}) => {
     auth()
       .createUserWithEmailAndPassword(value.email, value.password)
       .then(() => {
-        console.log('User account created & signed in!');
-        navigation.navigate('Home');
+        navigation.replace('Profile');
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
@@ -74,7 +73,7 @@ const Register = ({navigation}) => {
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.4}
-        onPress={() => navigation.navigate('Login')}>
+        onPress={() => navigation.replace('Login')}>
         <Text style={styles.alreadyText}>Already Have An Account?</Text>
       </TouchableOpacity>
     </SafeAreaView>

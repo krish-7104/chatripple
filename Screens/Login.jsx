@@ -21,7 +21,7 @@ const Login = ({navigation}) => {
       .signInWithEmailAndPassword(value.email, value.password)
       .then(res => {
         console.log(res);
-        navigation.navigate('Home');
+        navigation.replace('Home');
       })
       .catch(error => {
         if (

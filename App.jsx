@@ -1,76 +1,27 @@
-import 'react-native-gesture-handler';
 import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './Screens/Home';
 import Login from './Screens/Login';
 import Register from './Screens/Register';
+import PasswordReset from './Screens/PasswordReset';
+import Profile from './Screens/Profile';
 import Chat from './Screens/Chat';
 import AddFriend from './Screens/AddFriend';
-import Profile from './Screens/Profile';
-import {
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-  createDrawerNavigator,
-} from '@react-navigation/drawer';
-import {NavigationContainer} from '@react-navigation/native';
-import PasswordReset from './Screens/PasswordReset';
+
 const App = () => {
-  const Drawer = createDrawerNavigator();
-  function CustomDrawerContent(props) {
-    return (
-      <DrawerContentScrollView
-        {...props}
-        contentContainerStyle={{
-          paddingTop: 80,
-        }}>
-        <DrawerItemList {...props} />
-        <DrawerItem
-          label="Developer"
-          onPress={() => Linking.openURL('https://krishjotaniya.live')}
-        />
-      </DrawerContentScrollView>
-    );
-  }
+  const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="Login"
-        drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen
-          options={{
-            drawerItemStyle: {display: 'none'},
-            headerLeft: false,
-          }}
-          name="Login"
-          component={Login}
-        />
-        <Drawer.Screen
-          options={{
-            drawerItemStyle: {display: 'none'},
-            headerLeft: false,
-          }}
-          name="Password Reset"
-          component={PasswordReset}
-        />
-        <Drawer.Screen
-          options={{
-            drawerItemStyle: {display: 'none'},
-            headerLeft: false,
-          }}
-          name="Register"
-          component={Register}
-        />
-        <Drawer.Screen
-          options={{
-            drawerItemStyle: {display: 'none'},
-          }}
-          name="Chat"
-          component={Chat}
-        />
-        <Drawer.Screen name="Add Friend" component={AddFriend} />
-        <Drawer.Screen name="My Profile" component={Profile} />
-      </Drawer.Navigator>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="Reset Password" component={PasswordReset} />
+        <Stack.Screen name="My Profile" component={Profile} />
+        <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="Add Friend" component={AddFriend} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
