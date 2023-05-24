@@ -7,7 +7,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import React, {useState} from 'react';
-
+import auth from '@react-native-firebase/auth';
 const Register = ({navigation}) => {
   const [value, setValue] = useState({
     email: '',
@@ -16,8 +16,16 @@ const Register = ({navigation}) => {
     name: '',
   });
 
-  const registerHandler = () => {
-    //
+  const registerHandler = async () => {
+    try {
+      const res = await auth().createUserWithEmailAndPassword(
+        value.email,
+        value.password,
+      );
+      navigation.replace('Login');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

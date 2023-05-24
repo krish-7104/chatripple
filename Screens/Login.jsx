@@ -14,8 +14,16 @@ const Login = ({navigation}) => {
     password: '',
   });
 
-  const loginHandler = () => {
-    //
+  const loginHandler = async () => {
+    try {
+      const res = await auth().signInWithEmailAndPassword(
+        value.email,
+        value.password,
+      );
+      navigation.replace('Home');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
