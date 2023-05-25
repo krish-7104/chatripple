@@ -6,16 +6,51 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
+import {UserContext} from '../Context/context';
+import auth from '@react-native-firebase/auth';
 
-const Profile = () => {
+const Profile = ({navigation}) => {
+  const contextData = useContext(UserContext);
   const [value, setValue] = useState({
     name: '',
     email: '',
     username: '',
     image: '',
   });
+  useEffect(() => {
+    setValue({
+      name: contextData.data.name,
+      email: contextData.data.email,
+      image: contextData.data.image,
+      username: contextData.data.username,
+    });
+  }, [contextData]);
+
+  const saveChangesHandler = async () => {
+    const update = {
+      displayName: value.name,
+      photoURL: value.image,
+    };
+    try {
+      await auth().currentUser.updateProfile(update);
+      ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+    }
+    contextData.setData({
+      ...contextData.data,
+      username: value.username,
+      name: value.name,
+      email: value.email,
+      image: value.image,
+    });
+    navigation.replace('Home');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profileCont}>
@@ -46,7 +81,10 @@ const Profile = () => {
           onChangeText={text => setValue({...value, email: text})}
           style={styles.input}
         />
-        <TouchableOpacity style={styles.btnCont} activeOpacity={0.4}>
+        <TouchableOpacity
+          style={styles.btnCont}
+          activeOpacity={0.4}
+          onPress={saveChangesHandler}>
           <Text style={styles.btnText}>Save Changes</Text>
         </TouchableOpacity>
       </View>
