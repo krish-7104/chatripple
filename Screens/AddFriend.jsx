@@ -1,14 +1,41 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
+import React, {useState} from 'react';
 
 const AddFriend = () => {
+  const [search, setSearch] = useState('');
   return (
-    <View>
-      <Text>AddFriend</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <TextInput
+          placeholder="Enter Username"
+          value={search}
+          onChangeText={text => setSearch(text)}
+        />
+        <TouchableOpacity>
+          <Text></Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          alignItems: 'center',
+        }}></ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default AddFriend;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 12,
+  },
+});
