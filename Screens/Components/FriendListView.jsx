@@ -1,8 +1,10 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState, useContext} from 'react';
 import firestore from '@react-native-firebase/firestore';
+import {NavigationContext} from '@react-navigation/native';
 
-const ChatView = ({chat}) => {
+const FriendListView = props => {
+  const navigation = useContext(NavigationContext);
   useEffect(() => {
     getUserData();
   }, []);
@@ -10,13 +12,23 @@ const ChatView = ({chat}) => {
   const getUserData = async () => {
     const userData = await firestore()
       .collection('users')
-      .doc(chat[1].userInfo.uid)
+      .doc(props.chat[1].userInfo.uid)
       .get();
     setData(userData._data);
   };
 
   return (
-    <View style={styles.chatViewCont}>
+    <TouchableOpacity
+      style={styles.FriendListViewCont}
+      activeOpacity={0.8}
+      onPress={() =>
+        navigation.navigate('Chat', {
+          uid: props.chat[1].userInfo.uid,
+          name: data.name,
+          image: data.image,
+          username: data.username,
+        })
+      }>
       {data && (
         <Image
           source={{
@@ -26,19 +38,19 @@ const ChatView = ({chat}) => {
         />
       )}
       <View>
-        <Text style={styles.chatViewName}>{data && data.name}</Text>
-        <Text style={styles.chatViewLastMsg}>
-          {data && chat[1].lastMessage}
+        <Text style={styles.FriendListViewName}>{data && data.name}</Text>
+        <Text style={styles.FriendListViewLastMsg}>
+          {data && props.chat[1].lastMessage}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
-export default ChatView;
+export default FriendListView;
 
 const styles = StyleSheet.create({
-  chatViewCont: {
+  FriendListViewCont: {
     backgroundColor: 'white',
     padding: 8,
     width: '96%',
@@ -56,12 +68,12 @@ const styles = StyleSheet.create({
     height: 55,
     borderRadius: 50,
   },
-  chatViewName: {
+  FriendListViewName: {
     fontSize: 16,
     marginLeft: 12,
     color: 'black',
   },
-  chatViewLastMsg: {
+  FriendListViewLastMsg: {
     fontSize: 13,
     marginLeft: 12,
   },

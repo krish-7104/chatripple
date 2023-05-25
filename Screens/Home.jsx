@@ -1,6 +1,6 @@
 import {SafeAreaView, StyleSheet, ScrollView, Button} from 'react-native';
 import React, {useEffect, useContext, useState} from 'react';
-import ChatView from './Components/ChatView';
+import FriendListView from './Components/FriendListView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
@@ -32,7 +32,6 @@ const Home = ({navigation}) => {
   const getChatsHandler = async uid => {
     const userData = await firestore().collection('userChats').doc(uid).get();
     setChat(userData._data);
-    console.log(userData._data);
   };
 
   return (
@@ -45,7 +44,7 @@ const Home = ({navigation}) => {
         }}>
         {chats &&
           Object.entries(chats).map(chat => {
-            return <ChatView key={chat[0]} chat={chat} />;
+            return <FriendListView key={chat[0]} chat={chat} />;
           })}
         <Button
           title="Logout"
