@@ -30,8 +30,6 @@ const Profile = ({navigation}) => {
     });
   }, [contextData]);
 
-  const addUserToDatabase = async () => {};
-
   const saveChangesHandler = async () => {
     const update = {
       displayName: value.name,
@@ -43,10 +41,10 @@ const Profile = ({navigation}) => {
         .collection('users')
         .doc(contextData.data.uid)
         .set({
-          name: contextData.data.name ? contextData.data.name : '',
-          email: contextData.data.email ? contextData.data.email : '',
-          image: contextData.data.image ? contextData.data.image : '',
-          username: contextData.data.username ? contextData.data.username : '',
+          name: value.name ? value.name : '',
+          email: value.email ? value.email : '',
+          image: value.image ? value.image : '',
+          username: value.username ? value.username : '',
         })
         .then(() => {
           ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
@@ -56,6 +54,13 @@ const Profile = ({navigation}) => {
           console.log(error);
           ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
         });
+      const user = await firestore()
+        .collection('userChats')
+        .doc(contextData.data.uid)
+        .get();
+      if (!user._exists) {
+        firestore().collection('chats').doc(contextData.data.uid).set({});
+      }
     } catch (error) {
       console.log(error);
       ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
@@ -67,7 +72,6 @@ const Profile = ({navigation}) => {
       email: value.email,
       image: value.image,
     });
-    addUserToDatabase();
   };
 
   return (

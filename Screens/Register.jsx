@@ -7,37 +7,72 @@ import {
   SafeAreaView,
   ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
+import {UserContext} from '../Context/context';
+import firestore from '@react-native-firebase/firestore';
 const Register = ({navigation}) => {
   const [value, setValue] = useState({
     email: '',
     password: '',
+    image: '',
     username: '',
-    name: '',
   });
+  const contextData = useContext(UserContext);
 
-  const onAuthStateChanged = user => {
-    if (user) navigation.replace('Home');
+  const saveChangesHandler = async uid => {
+    const update = {
+      displayName: value.name,
+      photoURL: value.image,
+    };
+    try {
+      await auth().currentUser.updateProfile(update);
+      firestore()
+        .collection('users')
+        .doc(uid)
+        .set({
+          name: value.name ? value.name : '',
+          email: value.email ? value.email : '',
+          image: value.image ? value.image : '',
+          username: value.username ? value.username : '',
+        })
+        .catch(e => {
+          console.log(error);
+          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+        });
+      const user = await firestore().collection('userChats').doc(uid).get();
+      if (!user._exists) {
+        firestore().collection('userChats').doc(uid).set({});
+      }
+      ToastAndroid.show('Account Created', ToastAndroid.SHORT);
+      contextData.setData({
+        ...contextData.data,
+        username: value.username,
+        name: value.name,
+        email: value.email,
+        image: value.image,
+        uid,
+      });
+      navigation.replace('Home');
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+    }
   };
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
 
   const registerHandler = () => {
     auth()
       .createUserWithEmailAndPassword(value.email, value.password)
-      .then(() => {
-        navigation.replace('Profile');
+      .then(e => {
+        saveChangesHandler(e.user.uid);
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
           ToastAndroid.show('Email Already In Use!', ToastAndroid.SHORT);
         } else if (error.code === 'auth/invalid-email') {
-          ToastAndroid.show('Email Is Invalid!');
+          ToastAndroid.show('Email Is Invalid!', ToastAndroid.SHORT);
         } else if (error.code === 'auth/weak-password') {
-          ToastAndroid.show('Weak Password!');
+          ToastAndroid.show('Weak Password!', ToastAndroid.SHORT);
         } else {
           ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
         }

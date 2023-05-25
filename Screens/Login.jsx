@@ -17,20 +17,16 @@ const Login = ({navigation}) => {
     email: '',
     password: '',
   });
-
-  const onAuthStateChanged = user => {
-    // if (user) navigation.replace('Home');
-  };
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
-
   const contextData = useContext(UserContext);
 
   const getDataFromFirebase = async uid => {
+    console.log(uid);
     const user = await firestore().collection('users').doc(uid).get();
-    contextData.setData({...contextData.data, ...user._data});
+    contextData.setData({...contextData.data, ...user._data, uid});
+    const user1 = await firestore().collection('userChats').doc(uid).get();
+    if (!user1._exists) {
+      firestore().collection('userChats').doc(uid).set({});
+    }
     navigation.replace('Home');
   };
 
@@ -47,9 +43,12 @@ const Login = ({navigation}) => {
         ) {
           ToastAndroid.show('Invalid Credentials!', ToastAndroid.SHORT);
         } else if (error.code === 'auth/too-many-requests') {
-          ToastAndroid.show('To Many Attempts, Try Later!');
+          ToastAndroid.show('To Many Attempts, Try Later!', ToastAndroid.SHORT);
         } else if (error.code === 'auth/user-disabled') {
-          ToastAndroid.show('User Disabled! Contact Developer');
+          ToastAndroid.show(
+            'User Disabled! Contact Developer',
+            ToastAndroid.SHORT,
+          );
         } else {
           ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
         }

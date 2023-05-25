@@ -12,10 +12,11 @@ import {UserState} from './Context/context';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
+
   return (
-    <UserState>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Add Friend">
+    <NavigationContainer>
+      <UserState>
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
@@ -24,8 +25,8 @@ const App = () => {
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="Add Friend" component={AddFriend} />
         </Stack.Navigator>
-      </NavigationContainer>
-    </UserState>
+      </UserState>
+    </NavigationContainer>
   );
 };
 
