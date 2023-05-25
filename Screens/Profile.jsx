@@ -11,6 +11,7 @@ import {
 import React, {useContext, useEffect, useState} from 'react';
 import {UserContext} from '../Context/context';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
@@ -29,6 +30,8 @@ const Profile = ({navigation}) => {
     });
   }, [contextData]);
 
+  const addUserToDatabase = async () => {};
+
   const saveChangesHandler = async () => {
     const update = {
       displayName: value.name,
@@ -36,7 +39,23 @@ const Profile = ({navigation}) => {
     };
     try {
       await auth().currentUser.updateProfile(update);
-      ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
+      firestore()
+        .collection('users')
+        .doc(contextData.data.uid)
+        .set({
+          name: contextData.data.name ? contextData.data.name : '',
+          email: contextData.data.email ? contextData.data.email : '',
+          image: contextData.data.image ? contextData.data.image : '',
+          username: contextData.data.username ? contextData.data.username : '',
+        })
+        .then(() => {
+          ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
+          navigation.replace('Home');
+        })
+        .catch(e => {
+          console.log(error);
+          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+        });
     } catch (error) {
       console.log(error);
       ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
@@ -48,7 +67,7 @@ const Profile = ({navigation}) => {
       email: value.email,
       image: value.image,
     });
-    navigation.replace('Home');
+    addUserToDatabase();
   };
 
   return (

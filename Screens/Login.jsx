@@ -7,8 +7,10 @@ import {
   SafeAreaView,
   ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {UserContext} from '../Context/context';
 
 const Login = ({navigation}) => {
   const [value, setValue] = useState({
@@ -17,19 +19,26 @@ const Login = ({navigation}) => {
   });
 
   const onAuthStateChanged = user => {
-    if (user) navigation.replace('Home');
+    // if (user) navigation.replace('Home');
   };
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
 
+  const contextData = useContext(UserContext);
+
+  const getDataFromFirebase = async uid => {
+    const user = await firestore().collection('users').doc(uid).get();
+    contextData.setData({...contextData.data, ...user._data});
+    navigation.replace('Home');
+  };
+
   const loginHandler = async () => {
     auth()
       .signInWithEmailAndPassword(value.email, value.password)
       .then(res => {
-        console.log(res);
-        navigation.replace('Home');
+        getDataFromFirebase(res.user.uid);
       })
       .catch(error => {
         if (

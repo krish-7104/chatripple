@@ -1,14 +1,7 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  Image,
-} from 'react-native';
-import React, {useEffect, useContext} from 'react';
-import auth from '@react-native-firebase/auth';
+import {SafeAreaView, StyleSheet, ScrollView} from 'react-native';
+import React from 'react';
 import ChatView from './Components/ChatView';
+import firestore from '@react-native-firebase/firestore';
 
 const Home = ({navigation}) => {
   return (
