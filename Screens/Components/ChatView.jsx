@@ -1,18 +1,35 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import firestore from '@react-native-firebase/firestore';
 
-const ChatView = () => {
+const ChatView = ({chat}) => {
+  useEffect(() => {
+    getUserData();
+  }, []);
+  const [data, setData] = useState();
+  const getUserData = async () => {
+    const userData = await firestore()
+      .collection('users')
+      .doc(chat[1].userInfo.uid)
+      .get();
+    setData(userData._data);
+  };
+
   return (
     <View style={styles.chatViewCont}>
-      <Image
-        source={{
-          uri: 'https://image.lexica.art/full_jpg/38d04e3b-77e1-4cb9-9bb4-fb99cda8b522',
-        }}
-        style={styles.chatProfile}
-      />
+      {data && (
+        <Image
+          source={{
+            uri: data && data.image,
+          }}
+          style={styles.chatProfile}
+        />
+      )}
       <View>
-        <Text style={styles.chatViewName}>Krish Jotaniya</Text>
-        <Text style={styles.chatViewLastMsg}>Krish Jotaniya</Text>
+        <Text style={styles.chatViewName}>{data && data.name}</Text>
+        <Text style={styles.chatViewLastMsg}>
+          {data && chat[1].lastMessage}
+        </Text>
       </View>
     </View>
   );

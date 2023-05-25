@@ -20,7 +20,6 @@ const Login = ({navigation}) => {
   const contextData = useContext(UserContext);
 
   const getDataFromFirebase = async uid => {
-    console.log(uid);
     const user = await firestore().collection('users').doc(uid).get();
     contextData.setData({...contextData.data, ...user._data, uid});
     const user1 = await firestore().collection('userChats').doc(uid).get();

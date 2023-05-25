@@ -46,7 +46,7 @@ const AddFriend = ({navigation}) => {
         .doc(uid)
         .update({
           [combinedId + '.userInfo']: {
-            uid: uid,
+            uid: contextData.data.uid,
           },
           [combinedId + '.lastMessage']: '',
         });
@@ -55,7 +55,7 @@ const AddFriend = ({navigation}) => {
         .doc(contextData.data.uid)
         .update({
           [combinedId + '.userInfo']: {
-            uid: contextData.data.uid,
+            uid: uid,
           },
           [combinedId + '.lastMessage']: '',
         });

@@ -1,5 +1,5 @@
 import {SafeAreaView, StyleSheet, ScrollView, Button} from 'react-native';
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import ChatView from './Components/ChatView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -7,6 +7,7 @@ import {UserContext} from '../Context/context';
 
 const Home = ({navigation}) => {
   const contextData = useContext(UserContext);
+  const [chats, setChat] = useState();
   const onAuthStateChanged = async user => {
     if (!user) navigation.replace('Register');
     else {
@@ -14,13 +15,25 @@ const Home = ({navigation}) => {
         .collection('users')
         .doc(user.uid)
         .get();
-      contextData.setData({...contextData.data, ...userData._data});
+      contextData.setData({
+        ...contextData.data,
+        ...userData._data,
+        uid: user.uid,
+      });
+      getChatsHandler(user.uid);
     }
   };
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+
     return subscriber;
   }, []);
+
+  const getChatsHandler = async uid => {
+    const userData = await firestore().collection('userChats').doc(uid).get();
+    setChat(userData._data);
+    console.log(userData._data);
+  };
 
   return (
     <SafeAreaView>
@@ -30,16 +43,10 @@ const Home = ({navigation}) => {
           alignItems: 'center',
           height: '100%',
         }}>
-        <Button
-          title="Add Friends"
-          onPress={() =>
-            // auth()
-            //   .signOut()
-            //   .then(() => console.log('User signed out!'))
-            navigation.navigate('Add Friend')
-          }
-        />
-        <ChatView />
+        {chats &&
+          Object.entries(chats).map(chat => {
+            return <ChatView key={chat[0]} chat={chat} />;
+          })}
         <Button
           title="Logout"
           onPress={() =>
