@@ -114,14 +114,6 @@ const Main = ({navigation}) => {
           Object.entries(chats).map(chat => {
             return <FriendListView key={chat[0]} chat={chat} />;
           })}
-        <Button
-          title="Logout"
-          onPress={() =>
-            auth()
-              .signOut()
-              .then(() => console.log('User signed out!'))
-          }
-        />
       </ScrollView>
       <TouchableOpacity
         activeOpacity={0.8}
