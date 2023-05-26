@@ -21,6 +21,7 @@ const Profile = ({navigation}) => {
     username: '',
     image: '',
   });
+
   useEffect(() => {
     setValue({
       name: contextData.data.name,
@@ -28,20 +29,6 @@ const Profile = ({navigation}) => {
       username: contextData.data.username,
     });
   }, [contextData]);
-
-  useEffect(() => {
-    if (value.name) {
-      setValue({
-        ...value,
-        image: `https://ui-avatars.com/api/?name=${value.name}&size=512&rounded=true`,
-      });
-    } else {
-      setValue({
-        ...value,
-        image: `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
-      });
-    }
-  }, [value.name]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,6 +47,23 @@ const Profile = ({navigation}) => {
       },
     });
   }, [navigation]);
+
+  const nameHandler = e => {
+    setValue({...value, name: e});
+    if (value.image === '') {
+      if (value.name) {
+        setValue({
+          ...value,
+          image: `https://ui-avatars.com/api/?name=${value.name}&size=512&rounded=true`,
+        });
+      } else {
+        setValue({
+          ...value,
+          image: `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
+        });
+      }
+    }
+  };
 
   const saveChangesHandler = async () => {
     Keyboard.dismiss();
@@ -133,7 +137,7 @@ const Profile = ({navigation}) => {
         <Text style={styles.labelText}>Display Name</Text>
         <TextInput
           value={value.name}
-          onChangeText={text => setValue({...value, name: text})}
+          onChangeText={nameHandler}
           style={styles.input}
         />
         <TouchableOpacity
@@ -166,6 +170,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     marginBottom: 16,
+    borderRadius: 60,
   },
   uploadImageBtn: {
     backgroundColor: '#fff',

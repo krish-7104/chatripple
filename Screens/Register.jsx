@@ -29,6 +29,7 @@ const Register = ({navigation}) => {
           <Text
             style={{
               fontSize: 18,
+              marginLeft: -16,
               fontFamily: 'Montserrat-SemiBold',
               color: 'black',
             }}>

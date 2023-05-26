@@ -30,6 +30,7 @@ const Login = ({navigation}) => {
               fontSize: 18,
               fontFamily: 'Montserrat-SemiBold',
               color: 'black',
+              marginLeft: -16,
             }}>
             Login - Chat Ripple
           </Text>
@@ -49,7 +50,7 @@ const Login = ({navigation}) => {
     if (!user1._exists) {
       firestore().collection('userChats').doc(uid).set({});
     }
-    navigation.replace('Home');
+    navigation.replace('Main');
   };
 
   const loginHandler = async () => {
