@@ -144,16 +144,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginBottom: 10,
-  },
-  forgetText: {
-    fontSize: 12,
-    paddingBottom: 10,
-    textAlign: 'right',
-    color: '#3266ff',
-    fontWeight: '700',
+    color: '#000',
   },
   labelText: {
     marginBottom: 4,
+    color: '#000',
   },
   btnCont: {
     backgroundColor: '#2563eb',
@@ -168,5 +163,6 @@ const styles = StyleSheet.create({
   },
   alreadyText: {
     marginTop: 8,
+    color: '#000',
   },
 });

@@ -20,19 +20,25 @@ const Home = ({navigation}) => {
         ...userData._data,
         uid: user.uid,
       });
-      getChatsHandler(user.uid);
+      // getChatsHandler(user.uid);
     }
   };
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-
     return subscriber;
   }, []);
 
-  const getChatsHandler = async uid => {
-    const userData = await firestore().collection('userChats').doc(uid).get();
-    setChat(userData._data);
-  };
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('userChats')
+      .doc(contextData.data.uid)
+      .onSnapshot(documentSnapshot => {
+        setChat(documentSnapshot.data());
+      });
+
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, [contextData.data.uid]);
 
   return (
     <SafeAreaView>

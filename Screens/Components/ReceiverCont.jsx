@@ -1,17 +1,22 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
+import CryptoJS from 'react-native-crypto-js';
 
-const ReceiverCont = () => {
+const ReceiverCont = ({chat, combinedId, image}) => {
   return (
     <View style={{width: '100%', marginBottom: 16}}>
       <Image
         source={{
-          uri: 'https://image.lexica.art/full_jpg/7f973906-7787-4b73-8284-b6c794ec3b0b',
+          uri: image
+            ? image
+            : 'https://image.lexica.art/full_jpg/7f973906-7787-4b73-8284-b6c794ec3b0b',
         }}
         style={styles.ReceiveProfile}
       />
       <Text style={styles.ReceiveMessage}>
-        Krishsdffsfdsfsfsffsfsfsfsfsfsffsf
+        {CryptoJS.AES.decrypt(chat.text, combinedId).toString(
+          CryptoJS.enc.Utf8,
+        )}
       </Text>
       {/* <Text style={styles.ReceiveMessageTime}>10:00 PM</Text> */}
     </View>
@@ -29,18 +34,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     position: 'relative',
     maxWidth: '85%',
-    fontSize: 12,
+    fontSize: 16,
+    color: 'black',
   },
   ReceiveMessageTime: {
-    fontSize: 8,
+    fontSize: 12,
     marginTop: 2,
     position: 'absolute',
     bottom: -12,
+    color: 'black',
   },
   ReceiveProfile: {
     position: 'absolute',
-    width: 26,
-    height: 26,
+    width: 30,
+    height: 30,
     borderRadius: 60,
     zIndex: 1,
     top: -5,

@@ -2,8 +2,15 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {NavigationContext} from '@react-navigation/native';
+import CryptoJS from 'react-native-crypto-js';
+import {UserContext} from '../../Context/context';
 
 const FriendListView = props => {
+  const contextData = useContext(UserContext);
+  let combinedId =
+    props.chat[1].userInfo.uid > contextData.data.uid
+      ? props.chat[1].userInfo.uid + contextData.data.uid
+      : contextData.data.uid + props.chat[1].userInfo.uid;
   const navigation = useContext(NavigationContext);
   useEffect(() => {
     getUserData();
@@ -40,7 +47,12 @@ const FriendListView = props => {
       <View>
         <Text style={styles.FriendListViewName}>{data && data.name}</Text>
         <Text style={styles.FriendListViewLastMsg}>
-          {data && props.chat[1].lastMessage}
+          {/* {data && props.chat[1].lastMessage} */}
+          {data &&
+            CryptoJS.AES.decrypt(
+              props.chat[1].lastMessage,
+              combinedId,
+            ).toString(CryptoJS.enc.Utf8)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -76,5 +88,6 @@ const styles = StyleSheet.create({
   FriendListViewLastMsg: {
     fontSize: 13,
     marginLeft: 12,
+    color: 'black',
   },
 });

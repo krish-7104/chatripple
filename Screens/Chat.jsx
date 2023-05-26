@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, {useLayoutEffect, useContext, useState} from 'react';
+import React, {useLayoutEffect, useContext, useState, useEffect} from 'react';
 import SendIcon from 'react-native-vector-icons/Ionicons';
 import {UserContext} from '../Context/context';
 import ReceiverCont from './Components/ReceiverCont';
@@ -19,6 +19,7 @@ import firestore from '@react-native-firebase/firestore';
 
 const Chat = ({route, navigation}) => {
   const contextData = useContext(UserContext);
+  const [chats, setChats] = useState([]);
   const [message, setMessage] = useState('');
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -58,11 +59,12 @@ const Chat = ({route, navigation}) => {
     });
   }, [navigation]);
 
+  let combinedId =
+    route.params.uid > contextData.data.uid
+      ? route.params.uid + contextData.data.uid
+      : contextData.data.uid + route.params.uid;
+
   const sendMessageHandler = () => {
-    let combinedId =
-      route.params.uid > contextData.data.uid
-        ? route.params.uid + contextData.data.uid
-        : contextData.data.uid + route.params.uid;
     let encryptMessage = CryptoJS.AES.encrypt(message, combinedId).toString();
     firestore()
       .collection('chats')
@@ -89,7 +91,20 @@ const Chat = ({route, navigation}) => {
         [combinedId + '.lastMessage']: encryptMessage,
         [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
       });
+    setMessage('');
   };
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('chats')
+      .doc(combinedId)
+      .onSnapshot(documentSnapshot => {
+        setChats(documentSnapshot.data().messages);
+      });
+
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, [contextData.data.uid]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -100,8 +115,28 @@ const Chat = ({route, navigation}) => {
           flex: 1,
           alignItems: 'flex-start',
         }}>
-        <ReceiverCont />
-        <SenderCont />
+        {chats &&
+          chats.map(chat => {
+            if (chat.senderId === contextData.data.uid) {
+              return (
+                <SenderCont
+                  key={chat.id}
+                  chat={chat}
+                  combinedId={combinedId}
+                  image={contextData.data.image}
+                />
+              );
+            } else if (chat.senderId === route.params.uid) {
+              return (
+                <ReceiverCont
+                  chat={chat}
+                  combinedId={combinedId}
+                  key={chat.id}
+                  image={route.params.image}
+                />
+              );
+            }
+          })}
       </ScrollView>
       <View style={styles.sendMessageCont}>
         <TextInput
