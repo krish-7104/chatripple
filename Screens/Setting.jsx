@@ -1,8 +1,23 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useLayoutEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
+import React, {useEffect, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 
 const Setting = ({navigation}) => {
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
+  const onAuthStateChanged = async user => {
+    if (!user) {
+      navigation.replace('Home');
+    }
+  };
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Settings',
@@ -23,7 +38,7 @@ const Setting = ({navigation}) => {
   const logoutHandler = () => {
     auth()
       .signOut()
-      .then(() => navigation.replace('Home'));
+      .then(() => ToastAndroid.show('Logout Successfully', ToastAndroid.SHORT));
   };
   return (
     <View style={styles.container}>
