@@ -106,7 +106,7 @@ const Profile = ({navigation}) => {
         name: value.name,
         image: value.image,
       });
-      navigation.replace('Main');
+      navigation.replace('Home');
     } else {
       ToastAndroid.show('Enter All Details!', ToastAndroid.SHORT);
     }

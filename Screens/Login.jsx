@@ -50,7 +50,7 @@ const Login = ({navigation}) => {
     if (!user1._exists) {
       firestore().collection('userChats').doc(uid).set({});
     }
-    navigation.replace('Main');
+    navigation.replace('Home');
   };
 
   const loginHandler = async () => {

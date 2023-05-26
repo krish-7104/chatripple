@@ -1,143 +1,139 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
-import React, {useEffect, useLayoutEffect, useContext, useState} from 'react';
-import {PermissionsAndroid} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
+import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
+import FriendListView from './Components/FriendListView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
-import GoogleIcon from 'react-native-vector-icons/Ionicons';
+import AddFriend from 'react-native-vector-icons/MaterialIcons';
+import SettingIcon from 'react-native-vector-icons/Ionicons';
+
 const Home = ({navigation}) => {
-  const [loading, setLoading] = useState(true);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Home',
+      headerTitle: () => {
+        return (
+          <View style={{marginVertical: 20}}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: 'Montserrat-SemiBold',
+                color: 'black',
+                textAlign: 'center',
+              }}>
+              Chat Ripple
+            </Text>
+          </View>
+        );
+      },
+      headerLeft: () => null,
+      headerRight: () => {
+        return (
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingRight: 8,
+            }}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => navigation.navigate('My Profile')}
+              style={{marginRight: 14}}>
+              {contextData.data && (
+                <Image
+                  source={{
+                    uri: contextData.data.image
+                      ? contextData.data.image
+                      : 'https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`',
+                  }}
+                  style={styles.chatProfile}
+                />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => navigation.navigate('Setting')}>
+              <SettingIcon name="settings-outline" color="black" size={24} />
+            </TouchableOpacity>
+          </View>
+        );
+      },
+    });
+  }, [navigation]);
   const contextData = useContext(UserContext);
+  const [chats, setChat] = useState();
   const onAuthStateChanged = async user => {
-    if (user) {
-      const userData = await firestore()
-        .collection('users')
-        .doc(user.uid)
-        .get();
-      contextData.setData({
-        ...contextData.data,
-        ...userData._data,
-        uid: user.uid,
-      });
-      navigation.replace('Main');
-    }
-    setLoading(false);
+    if (!user) navigation.replace('Register');
   };
   useEffect(() => {
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('userChats')
+      .doc(contextData.data.uid)
+      .onSnapshot(documentSnapshot => {
+        setChat(documentSnapshot.data());
+      });
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, [contextData.data.uid]);
+
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
-      <Text style={styles.appName}>Chat Ripple</Text>
-      <Text style={styles.subTitle}>End To End Decryption</Text>
-      {!loading && (
-        <View style={styles.btnArea}>
-          <TouchableOpacity
-            style={styles.btnCont}
-            activeOpacity={0.6}
-            onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.btnText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.btnCont}
-            activeOpacity={0.6}
-            onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.btnText}>Create Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.btnGoogleCont} activeOpacity={0.6}>
-            <Text style={styles.btnGoogleText}>Continue With</Text>
-            <GoogleIcon name="logo-google" size={20} color="black" />
-          </TouchableOpacity>
-        </View>
-      )}
-      <Text style={styles.footerText}>Developed By Krish Jotaniya</Text>
-    </View>
+    <SafeAreaView>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          alignItems: 'center',
+          height: '100%',
+        }}>
+        {chats &&
+          Object.entries(chats).map(chat => {
+            return <FriendListView key={chat[0]} chat={chat} />;
+          })}
+      </ScrollView>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.floatingBtn}
+        onPress={() => navigation.navigate('Add Friend')}>
+        <AddFriend name="person-add" color="white" size={24} />
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 export default Home;
 
 const styles = StyleSheet.create({
-  logo: {
-    width: 90,
-    height: 90,
-    marginBottom: 18,
-  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 12,
   },
-  appName: {
-    color: 'black',
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: 34,
-  },
-  subTitle: {
-    color: '#00000090',
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: 18,
-    marginTop: 10,
-  },
-  btnCont: {
-    backgroundColor: '#2563eb',
-    width: '70%',
-    paddingVertical: 12,
-    borderRadius: 8,
-    elevation: 14,
-    marginTop: 16,
-    shadowColor: '#2563eb',
-  },
-  btnText: {
-    textAlign: 'center',
-    color: '#ffffff',
-    fontSize: 18,
-    fontFamily: 'Montserrat-SemiBold',
-  },
-  btnArea: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 60,
-  },
-  btnGoogleCont: {
-    backgroundColor: '#fff',
-    width: '70%',
-    paddingVertical: 12,
-    borderRadius: 8,
-    elevation: 14,
-    marginTop: 16,
-    shadowColor: '#2563eb40',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  btnGoogleText: {
-    textAlign: 'center',
-    color: '#000',
-    fontSize: 18,
-    fontFamily: 'Montserrat-SemiBold',
-    marginRight: 8,
-  },
-  footerText: {
-    color: 'black',
-    fontFamily: 'Montserrat-Bold',
-    fontSize: 12,
+  floatingBtn: {
     position: 'absolute',
-    bottom: 16,
-    textTransform: 'uppercase',
-    letterSpacing: 2,
+    bottom: 35,
+    right: 35,
+    backgroundColor: '#be123c',
+    elevation: 14,
+    padding: 16,
+    shadowColor: '#be123c',
+    borderRadius: 60,
+  },
+  chatProfile: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    paddingRight: 8,
   },
 });

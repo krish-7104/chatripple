@@ -15,7 +15,10 @@ const Setting = ({navigation}) => {
   }, []);
   const onAuthStateChanged = async user => {
     if (!user) {
-      navigation.replace('Home');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Entry'}],
+      });
     }
   };
   useLayoutEffect(() => {

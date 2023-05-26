@@ -1,7 +1,7 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Main from './Screens/Main';
+import Main from './Screens/Home';
 import Login from './Screens/Login';
 import Register from './Screens/Register';
 import PasswordReset from './Screens/PasswordReset';
@@ -10,6 +10,7 @@ import Chat from './Screens/Chat';
 import AddFriend from './Screens/AddFriend';
 import {UserState} from './Context/context';
 import Setting from './Screens/Setting';
+import Entry from './Screens/Entry';
 import Home from './Screens/Home';
 
 const App = () => {
@@ -18,9 +19,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <UserState>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Main" component={Main} />
+        <Stack.Navigator initialRouteName="Entry">
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Entry" component={Entry} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="Reset Password" component={PasswordReset} />
