@@ -38,7 +38,7 @@ const Chat = ({route, navigation}) => {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              marginLeft: -28,
+              marginLeft: -20,
             }}>
             <Image
               source={{
@@ -46,16 +46,20 @@ const Chat = ({route, navigation}) => {
               }}
               style={styles.navAvatar}
             />
-            <View style={{marginLeft: 6}}>
+            <View style={{marginLeft: 14}}>
               <Text
                 style={{
-                  fontSize: 15,
+                  fontSize: 18,
+                  fontFamily: 'Montserrat-SemiBold',
+                  color: 'black',
                 }}>
                 {route.params.name}
               </Text>
               <Text
                 style={{
-                  fontSize: 10,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat-Medium',
+                  color: 'black',
                 }}>
                 {route.params.username}
               </Text>
@@ -184,6 +188,7 @@ const Chat = ({route, navigation}) => {
         <TextInput
           placeholder="Enter Message Here.."
           style={styles.textInput}
+          placeholderTextColor={'#00000080'}
           value={message}
           onChangeText={text => setMessage(text)}
         />
@@ -191,7 +196,7 @@ const Chat = ({route, navigation}) => {
           style={styles.sendBtns}
           activeOpacity={0.8}
           onPress={sendMessageHandler}>
-          <SendIcon name="send-outline" color="black" size={20} />
+          <SendIcon name="send-outline" color="black" size={24} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -212,7 +217,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    color: 'black',
+    fontSize: 15,
+    fontFamily: 'Montserrat-Medium',
   },
   sendMessageCont: {
     display: 'flex',
@@ -226,15 +235,12 @@ const styles = StyleSheet.create({
   sendBtns: {
     paddingHorizontal: 10,
     paddingVertical: 6,
-    marginRight: 6,
-    backgroundColor: '#f2f2f2',
+    marginRight: 16,
+    // backgroundColor: '#f2f2f2',
     display: 'flex',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     flexDirection: 'row',
     borderRadius: 6,
-  },
-  space: {
-    padding: 10,
   },
 });

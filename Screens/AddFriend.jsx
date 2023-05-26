@@ -8,11 +8,30 @@ import {
   Text,
   Image,
 } from 'react-native';
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
 const AddFriend = ({navigation}) => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Home',
+      headerTitle: () => {
+        return (
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: 'Montserrat-SemiBold',
+              color: 'black',
+              textAlign: 'center',
+              marginLeft: -20,
+            }}>
+            Add Friend
+          </Text>
+        );
+      },
+    });
+  }, [navigation]);
   const contextData = useContext(UserContext);
   const [search, setSearch] = useState('');
   useEffect(() => {
@@ -70,12 +89,13 @@ const AddFriend = ({navigation}) => {
           value={search}
           onChangeText={text => setSearch(text)}
           style={styles.searchInput}
+          placeholderTextColor={'#00000050'}
         />
         <TouchableOpacity
           activeOpacity={0.4}
           style={styles.searchIcon}
           onPress={searchUserHandler}>
-          <Icon name="search-outline" color="black" size={22} />
+          <Icon name="search-outline" color="black" size={24} />
         </TouchableOpacity>
       </View>
       <View style={styles.divider}></View>
@@ -108,9 +128,9 @@ const AddFriend = ({navigation}) => {
                     />
                     <View>
                       <Text style={styles.chatViewName}>{user._data.name}</Text>
-                      <Text style={styles.chatViewLastMsg}>
+                      {/* <Text style={styles.chatViewLastMsg}>
                         {user._data.username}
-                      </Text>
+                      </Text> */}
                     </View>
                   </TouchableOpacity>
                 );
@@ -132,6 +152,9 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     width: '88%',
+    fontFamily: 'Montserrat-Medium',
+    color: 'black',
+    fontSize: 16,
   },
   searchCont: {
     width: '90%',
@@ -152,14 +175,14 @@ const styles = StyleSheet.create({
   },
   friendListCont: {
     flex: 1,
-    width: '90%',
+    width: '100%',
     marginTop: 10,
   },
   chatViewCont: {
     backgroundColor: 'white',
-    padding: 8,
+    padding: 12,
     borderRadius: 10,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     elevation: 4,
     display: 'flex',
     justifyContent: 'flex-start',
@@ -167,7 +190,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 10,
     flex: 1,
-    width: '100%',
+    width: '90%',
   },
   chatProfile: {
     width: 55,
@@ -175,12 +198,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   chatViewName: {
-    fontSize: 16,
+    fontSize: 18,
     marginLeft: 12,
     color: 'black',
-  },
-  chatViewLastMsg: {
-    fontSize: 13,
-    marginLeft: 12,
+    fontFamily: 'Montserrat-Medium',
   },
 });

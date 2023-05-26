@@ -4,7 +4,15 @@ import CryptoJS from 'react-native-crypto-js';
 
 const ReceiverCont = ({chat, combinedId, image}) => {
   return (
-    <View style={{width: '100%', marginBottom: 16}}>
+    <View
+      style={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        marginBottom: 26,
+      }}>
       <Image
         source={{
           uri: image
@@ -30,26 +38,27 @@ export default ReceiverCont;
 const styles = StyleSheet.create({
   ReceiveMessage: {
     backgroundColor: 'white',
-    paddingVertical: 8,
-    paddingLeft: 16,
-    paddingRight: 10,
+    paddingVertical: 10,
+    paddingLeft: 30,
+    paddingRight: 20,
     borderRadius: 10,
     position: 'relative',
     maxWidth: '85%',
-    fontSize: 16,
+    fontSize: 15,
     color: 'black',
+    fontFamily: 'Montserrat-Medium',
   },
   ReceiveMessageTime: {
-    fontSize: 12,
-    marginTop: 2,
+    fontSize: 10,
     position: 'absolute',
-    bottom: -12,
+    bottom: -16,
     color: 'black',
+    fontFamily: 'Montserrat-Regular',
   },
   ReceiveProfile: {
     position: 'absolute',
-    width: 30,
-    height: 30,
+    width: 34,
+    height: 34,
     borderRadius: 60,
     zIndex: 1,
     top: -5,

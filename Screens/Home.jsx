@@ -1,5 +1,5 @@
-import {SafeAreaView, StyleSheet, ScrollView, Button} from 'react-native';
-import React, {useEffect, useContext, useState} from 'react';
+import {SafeAreaView, StyleSheet, ScrollView, Button, Text} from 'react-native';
+import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
 import FriendListView from './Components/FriendListView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -7,6 +7,24 @@ import {UserContext} from '../Context/context';
 import {PermissionsAndroid} from 'react-native';
 
 const Home = ({navigation}) => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Home',
+      headerTitle: () => {
+        return (
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: 'Montserrat-SemiBold',
+              color: 'black',
+              textAlign: 'center',
+            }}>
+            Chat Ripple
+          </Text>
+        );
+      },
+    });
+  }, [navigation]);
   const contextData = useContext(UserContext);
   const [chats, setChat] = useState();
   const onAuthStateChanged = async user => {
