@@ -11,6 +11,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
+import messaging from '@react-native-firebase/messaging';
 
 const Login = ({navigation}) => {
   const [value, setValue] = useState({
@@ -20,6 +21,11 @@ const Login = ({navigation}) => {
   const contextData = useContext(UserContext);
 
   const getDataFromFirebase = async uid => {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+    firestore().collection('tokens').doc(uid).set({
+      token,
+    });
     const user = await firestore().collection('users').doc(uid).get();
     contextData.setData({...contextData.data, ...user._data, uid});
     const user1 = await firestore().collection('userChats').doc(uid).get();

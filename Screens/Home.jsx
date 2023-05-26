@@ -4,6 +4,7 @@ import FriendListView from './Components/FriendListView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
+import {PermissionsAndroid} from 'react-native';
 
 const Home = ({navigation}) => {
   const contextData = useContext(UserContext);
@@ -24,6 +25,9 @@ const Home = ({navigation}) => {
     }
   };
   useEffect(() => {
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
@@ -59,6 +63,10 @@ const Home = ({navigation}) => {
               .signOut()
               .then(() => console.log('User signed out!'))
           }
+        />
+        <Button
+          title="Add Friend"
+          onPress={() => navigation.navigate('Add Friend')}
         />
       </ScrollView>
     </SafeAreaView>

@@ -47,7 +47,6 @@ const FriendListView = props => {
       <View>
         <Text style={styles.FriendListViewName}>{data && data.name}</Text>
         <Text style={styles.FriendListViewLastMsg}>
-          {/* {data && props.chat[1].lastMessage} */}
           {data &&
             CryptoJS.AES.decrypt(
               props.chat[1].lastMessage,
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
   FriendListViewCont: {
     backgroundColor: 'white',
     padding: 8,
-    width: '96%',
+    width: '90%',
     borderRadius: 10,
     paddingHorizontal: 12,
     elevation: 4,

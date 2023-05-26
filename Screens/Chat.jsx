@@ -22,7 +22,7 @@ import SenderCont from './Components/SenderCont';
 import CryptoJS from 'react-native-crypto-js';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
-
+import axios from 'react-native-axios';
 const Chat = ({route, navigation}) => {
   const contextData = useContext(UserContext);
   const [chats, setChats] = useState([]);
@@ -71,7 +71,38 @@ const Chat = ({route, navigation}) => {
       ? route.params.uid + contextData.data.uid
       : contextData.data.uid + route.params.uid;
 
+  const sendNotification = async () => {
+    const user = await firestore()
+      .collection('tokens')
+      .doc(route.params.uid)
+      .get();
+    var data = JSON.stringify({
+      data: {},
+      notification: {
+        body: message,
+        title: route.params.name,
+      },
+      to: user._data.token,
+    });
+    var config = {
+      method: 'post',
+      url: 'https://fcm.googleapis.com/fcm/send',
+      headers: {
+        Authorization: 'key=',
+        'Content-Type': 'application/json',
+      },
+      data: data,
+    };
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   const sendMessageHandler = () => {
+    sendNotification();
     let encryptMessage = CryptoJS.AES.encrypt(message, combinedId).toString();
     firestore()
       .collection('chats')
@@ -108,8 +139,6 @@ const Chat = ({route, navigation}) => {
       .onSnapshot(documentSnapshot => {
         setChats(documentSnapshot.data().messages);
       });
-
-    // Stop listening for updates when no longer required
     return () => subscriber();
   }, [contextData.data.uid]);
 

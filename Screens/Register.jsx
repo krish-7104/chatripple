@@ -11,6 +11,8 @@ import React, {useContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import {UserContext} from '../Context/context';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
+
 const Register = ({navigation}) => {
   const [value, setValue] = useState({
     email: '',
@@ -21,6 +23,11 @@ const Register = ({navigation}) => {
   const contextData = useContext(UserContext);
 
   const saveChangesHandler = async uid => {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+    firestore().collection('tokens').doc(uid).set({
+      token,
+    });
     const update = {
       displayName: value.name,
       photoURL: value.image,
