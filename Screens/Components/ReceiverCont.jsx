@@ -18,7 +18,9 @@ const ReceiverCont = ({chat, combinedId, image}) => {
           CryptoJS.enc.Utf8,
         )}
       </Text>
-      {/* <Text style={styles.ReceiveMessageTime}>10:00 PM</Text> */}
+      <Text style={styles.ReceiveMessageTime}>
+        {chat.date.toDate().toString().replace(' GMT+0530', '')}
+      </Text>
     </View>
   );
 };

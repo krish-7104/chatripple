@@ -8,7 +8,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, {useLayoutEffect, useContext, useState, useEffect} from 'react';
+import React, {
+  useLayoutEffect,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import SendIcon from 'react-native-vector-icons/Ionicons';
 import {UserContext} from '../Context/context';
 import ReceiverCont from './Components/ReceiverCont';
@@ -20,6 +26,7 @@ import firestore from '@react-native-firebase/firestore';
 const Chat = ({route, navigation}) => {
   const contextData = useContext(UserContext);
   const [chats, setChats] = useState([]);
+  const scrollViewRef = useRef(null);
   const [message, setMessage] = useState('');
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -106,13 +113,19 @@ const Chat = ({route, navigation}) => {
     return () => subscriber();
   }, [contextData.data.uid]);
 
+  useEffect(() => {
+    scrollViewRef.current.scrollToEnd({animated: true});
+  }, [chats]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
+        ref={scrollViewRef}
+        style={{flexGrow: 1}}
         contentContainerStyle={{
           paddingHorizontal: 26,
           paddingVertical: 16,
-          flex: 1,
+          flexGrow: 1,
           alignItems: 'flex-start',
         }}>
         {chats &&
