@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ToastAndroid,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import {UserContext} from '../Context/context';
 import firestore from '@react-native-firebase/firestore';
@@ -21,7 +21,23 @@ const Register = ({navigation}) => {
     username: '',
   });
   const contextData = useContext(UserContext);
-
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Register',
+      headerTitle: () => {
+        return (
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: 'Montserrat-SemiBold',
+              color: 'black',
+            }}>
+            Create Account - Chat Ripple
+          </Text>
+        );
+      },
+    });
+  }, [navigation]);
   const saveChangesHandler = async uid => {
     await messaging().registerDeviceForRemoteMessages();
     const token = await messaging().getToken();
@@ -143,33 +159,41 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    fontSize: 14,
-    borderColor: '#D1D5DB',
+    fontSize: 16,
+    borderColor: '#9ca3af',
     borderWidth: 1.4,
     backgroundColor: '#F3F4F6',
     borderRadius: 4,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
     marginBottom: 10,
     color: '#000',
+    fontFamily: 'Montserrat-Medium',
   },
   labelText: {
     marginBottom: 4,
     color: '#000',
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
   btnCont: {
     backgroundColor: '#2563eb',
     width: '85%',
-    paddingVertical: 10,
-    borderRadius: 4,
-    elevation: 10,
+    paddingVertical: 12,
+    borderRadius: 8,
+    elevation: 14,
+    shadowColor: '#2563eb',
   },
   btnText: {
     textAlign: 'center',
     color: '#ffffff',
+    fontSize: 18,
+    fontFamily: 'Montserrat-SemiBold',
   },
   alreadyText: {
-    marginTop: 8,
+    marginTop: 20,
     color: '#000',
+    fontSize: 15,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });

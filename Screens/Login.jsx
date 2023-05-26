@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ToastAndroid,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useLayoutEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
@@ -19,7 +19,23 @@ const Login = ({navigation}) => {
     password: '',
   });
   const contextData = useContext(UserContext);
-
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Second Page',
+      headerTitle: () => {
+        return (
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: 'Montserrat-SemiBold',
+              color: 'black',
+            }}>
+            Login - Chat Ripple
+          </Text>
+        );
+      },
+    });
+  }, [navigation]);
   const getDataFromFirebase = async uid => {
     await messaging().registerDeviceForRemoteMessages();
     const token = await messaging().getToken();
@@ -79,7 +95,7 @@ const Login = ({navigation}) => {
       </View>
       <TouchableOpacity
         activeOpacity={0.4}
-        onPress={() => navigation.navigate('Password Reset')}>
+        onPress={() => navigation.navigate('Reset Password')}>
         <Text style={styles.forgetText}>Forget Password?</Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -90,7 +106,7 @@ const Login = ({navigation}) => {
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.4}
-        onPress={() => navigation.navigate('Register')}>
+        onPress={() => navigation.replace('Register')}>
         <Text style={styles.alreadyText}>Don't Have An Account?</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -110,41 +126,50 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    fontSize: 14,
-    borderColor: '#D1D5DB',
+    fontSize: 16,
+    borderColor: '#9ca3af',
     borderWidth: 1.4,
     backgroundColor: '#F3F4F6',
     borderRadius: 4,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
     marginBottom: 10,
     color: '#000',
+    fontFamily: 'Montserrat-Medium',
   },
   forgetText: {
-    fontSize: 12,
-    paddingBottom: 10,
+    fontSize: 14,
+    paddingBottom: 12,
     textAlign: 'right',
     width: '100%',
     color: '#3266ff',
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
   },
   labelText: {
     marginBottom: 4,
     color: '#000',
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
   btnCont: {
     backgroundColor: '#2563eb',
     width: '85%',
-    paddingVertical: 10,
-    borderRadius: 4,
-    elevation: 10,
+    paddingVertical: 12,
+    borderRadius: 8,
+    elevation: 14,
+    shadowColor: '#2563eb',
   },
   btnText: {
     textAlign: 'center',
     color: '#ffffff',
+    fontSize: 18,
+    fontFamily: 'Montserrat-SemiBold',
   },
   alreadyText: {
-    marginTop: 8,
+    marginTop: 20,
     color: '#000',
+    fontSize: 15,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });

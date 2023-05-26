@@ -5,10 +5,29 @@ import {
   View,
   TextInput,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 
-const PasswordReset = () => {
+const PasswordReset = ({navigation}) => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Reset Password',
+      headerTitle: () => {
+        return (
+          <Text
+            style={{
+              fontSize: 18,
+              position: 'absolute',
+              left: -20,
+              fontFamily: 'Montserrat-SemiBold',
+              color: 'black',
+            }}>
+            Reset Password - Chat Ripple
+          </Text>
+        );
+      },
+    });
+  }, [navigation]);
   const [email, setEmail] = useState();
   const [send, setSend] = useState(false);
   const resetLinkHandler = async () => {
@@ -35,10 +54,10 @@ const PasswordReset = () => {
           onPress={resetLinkHandler}>
           <Text style={styles.btnText}>Send Reset Link</Text>
         </TouchableOpacity>
-        <Text style={styles.sendText}>
+        {/* <Text style={styles.sendText}>
           Reset Link has been sent, if not received kindly check in the Spam
           Section!
-        </Text>
+        </Text> */}
       </View>
     </View>
   );
@@ -57,27 +76,37 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    fontSize: 14,
-    borderColor: '#D1D5DB',
+    fontSize: 16,
+    borderColor: '#9ca3af',
     borderWidth: 1.4,
     backgroundColor: '#F3F4F6',
     borderRadius: 4,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
+    marginBottom: 10,
+    color: '#000',
+    fontFamily: 'Montserrat-Medium',
   },
   labelText: {
     marginBottom: 4,
+    color: '#000',
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
   btnCont: {
     backgroundColor: '#2563eb',
-    paddingVertical: 10,
-    borderRadius: 4,
-    elevation: 10,
-    marginTop: 14,
+    width: '100%',
+    paddingVertical: 12,
+    marginTop: 10,
+    borderRadius: 8,
+    elevation: 14,
+    shadowColor: '#2563eb',
   },
   btnText: {
     textAlign: 'center',
     color: '#ffffff',
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
   sendText: {
     marginTop: 20,
