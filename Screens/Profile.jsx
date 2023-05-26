@@ -7,8 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   ToastAndroid,
+  Keyboard,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useLayoutEffect} from 'react';
 import {UserContext} from '../Context/context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -17,73 +18,110 @@ const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
   const [value, setValue] = useState({
     name: '',
-    email: '',
     username: '',
     image: '',
   });
   useEffect(() => {
     setValue({
       name: contextData.data.name,
-      email: contextData.data.email,
       image: contextData.data.image,
       username: contextData.data.username,
     });
   }, [contextData]);
 
-  const saveChangesHandler = async () => {
-    const update = {
-      displayName: value.name,
-      photoURL: value.image,
-    };
-    try {
-      await auth().currentUser.updateProfile(update);
-      firestore()
-        .collection('users')
-        .doc(contextData.data.uid)
-        .set({
-          name: value.name ? value.name : '',
-          email: value.email ? value.email : '',
-          image: value.image ? value.image : '',
-          username: value.username ? value.username : '',
-        })
-        .then(() => {
-          ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
-          navigation.replace('Home');
-        })
-        .catch(e => {
-          console.log(error);
-          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
-        });
-      const user = await firestore()
-        .collection('userChats')
-        .doc(contextData.data.uid)
-        .get();
-      if (!user._exists) {
-        firestore().collection('chats').doc(contextData.data.uid).set({});
-      }
-    } catch (error) {
-      console.log(error);
-      ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+  useEffect(() => {
+    if (value.name) {
+      setValue({
+        ...value,
+        image: `https://ui-avatars.com/api/?name=${value.name}&size=512&rounded=true`,
+      });
+    } else {
+      setValue({
+        ...value,
+        image: `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
+      });
     }
-    contextData.setData({
-      ...contextData.data,
-      username: value.username,
-      name: value.name,
-      email: value.email,
-      image: value.image,
+  }, [value.name]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'My Profile',
+      headerTitle: () => {
+        return (
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: 'Montserrat-SemiBold',
+              color: 'black',
+            }}>
+            My Profile - Chat Ripple
+          </Text>
+        );
+      },
     });
+  }, [navigation]);
+
+  const saveChangesHandler = async () => {
+    Keyboard.dismiss();
+    if (value.username && value.name) {
+      const update = {
+        displayName: value.name,
+        photoURL: value.image,
+      };
+      try {
+        await auth().currentUser.updateProfile(update);
+        firestore()
+          .collection('users')
+          .doc(contextData.data.uid)
+          .set({
+            name: value.name ? value.name : '',
+            image: value.image ? value.image : '',
+            username: value.username ? value.username : '',
+          })
+          .then(() => {
+            ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
+          })
+          .catch(e => {
+            console.log(error);
+            ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+          });
+        const user = await firestore()
+          .collection('userChats')
+          .doc(contextData.data.uid)
+          .get();
+        if (!user._exists) {
+          firestore().collection('chats').doc(contextData.data.uid).set({});
+        }
+      } catch (error) {
+        console.log(error);
+        ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+      }
+      contextData.setData({
+        ...contextData.data,
+        username: value.username,
+        name: value.name,
+        image: value.image,
+      });
+      navigation.replace('Home');
+    } else {
+      ToastAndroid.show('Enter All Details!', ToastAndroid.SHORT);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profileCont}>
         <Image
-          source={require('../assets/noImage.png')}
+          source={{
+            uri: value.image
+              ? value.image
+              : `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
+          }}
           style={styles.profile}
         />
-        <TouchableOpacity style={styles.uploadImageBtn} activeOpacity={0.4}>
+        {/* <TouchableOpacity style={styles.uploadImageBtn} activeOpacity={0.4}>
           <Text style={styles.uploadImageText}>Upload Profile</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.inputCont}>
         <Text style={styles.labelText}>Username</Text>
@@ -96,12 +134,6 @@ const Profile = ({navigation}) => {
         <TextInput
           value={value.name}
           onChangeText={text => setValue({...value, name: text})}
-          style={styles.input}
-        />
-        <Text style={styles.labelText}>Email Address</Text>
-        <TextInput
-          value={value.email}
-          onChangeText={text => setValue({...value, email: text})}
           style={styles.input}
         />
         <TouchableOpacity
@@ -128,48 +160,63 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    flexDirection: 'row',
+    marginBottom: 36,
   },
   profile: {
-    width: 80,
-    height: 80,
-  },
-  inputCont: {
-    width: '85%',
-    marginVertical: 14,
-  },
-  input: {
-    fontSize: 14,
-    borderColor: '#D1D5DB',
-    borderWidth: 1.4,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginBottom: 10,
+    width: 120,
+    height: 120,
+    marginBottom: 16,
   },
   uploadImageBtn: {
-    backgroundColor: '#bfdbfe',
+    backgroundColor: '#fff',
     borderRadius: 6,
+    elevation: 5,
+    shadowColor: '#2563eb',
     borderWidth: 1.2,
     borderColor: '#2563eb',
   },
   uploadImageText: {
+    fontFamily: 'Montserrat-SemiBold',
     color: '#2563eb',
-    fontSize: 12,
+    fontSize: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  inputCont: {
+    width: '85%',
+    marginBottom: 10,
+  },
+  input: {
+    fontSize: 16,
+    borderColor: '#9ca3af',
+    borderWidth: 1.4,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 4,
     paddingHorizontal: 12,
-    paddingVertical: 5,
+    paddingVertical: 8,
+    marginBottom: 10,
+    color: '#000',
+    fontFamily: 'Montserrat-Medium',
+  },
+  labelText: {
+    marginBottom: 4,
+    color: '#000',
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
   btnCont: {
     backgroundColor: '#2563eb',
     width: '100%',
-    paddingVertical: 10,
-    borderRadius: 4,
-    elevation: 10,
-    marginTop: 10,
+    paddingVertical: 12,
+    borderRadius: 8,
+    elevation: 14,
+    marginTop: 16,
+    shadowColor: '#2563eb',
   },
   btnText: {
     textAlign: 'center',
     color: '#ffffff',
+    fontSize: 18,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });

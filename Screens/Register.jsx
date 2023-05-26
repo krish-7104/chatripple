@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ToastAndroid,
+  Keyboard,
 } from 'react-native';
 import React, {useContext, useState, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -17,8 +18,7 @@ const Register = ({navigation}) => {
   const [value, setValue] = useState({
     email: '',
     password: '',
-    image: '',
-    username: '',
+    confirmPassword: '',
   });
   const contextData = useContext(UserContext);
   useLayoutEffect(() => {
@@ -44,20 +44,12 @@ const Register = ({navigation}) => {
     firestore().collection('tokens').doc(uid).set({
       token,
     });
-    const update = {
-      displayName: value.name,
-      photoURL: value.image,
-    };
     try {
-      await auth().currentUser.updateProfile(update);
       firestore()
         .collection('users')
         .doc(uid)
         .set({
-          name: value.name ? value.name : '',
           email: value.email ? value.email : '',
-          image: value.image ? value.image : '',
-          username: value.username ? value.username : '',
         })
         .catch(e => {
           console.log(error);
@@ -70,53 +62,52 @@ const Register = ({navigation}) => {
       ToastAndroid.show('Account Created', ToastAndroid.SHORT);
       contextData.setData({
         ...contextData.data,
-        username: value.username,
-        name: value.name,
         email: value.email,
-        image: value.image,
         uid,
+        image: '',
       });
-      navigation.replace('Home');
+      navigation.replace('My Profile');
     } catch (error) {
       console.log(error);
       ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
     }
+    setValue({email: '', password: '', confirmPassword: ''});
   };
 
   const registerHandler = () => {
-    auth()
-      .createUserWithEmailAndPassword(value.email, value.password)
-      .then(e => {
-        saveChangesHandler(e.user.uid);
-      })
-      .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          ToastAndroid.show('Email Already In Use!', ToastAndroid.SHORT);
-        } else if (error.code === 'auth/invalid-email') {
-          ToastAndroid.show('Email Is Invalid!', ToastAndroid.SHORT);
-        } else if (error.code === 'auth/weak-password') {
-          ToastAndroid.show('Weak Password!', ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
-        }
-      });
+    if (value.password === value.confirmPassword) {
+      if (value.email) {
+        auth()
+          .createUserWithEmailAndPassword(value.email, value.password)
+          .then(e => {
+            Keyboard.dismiss();
+            saveChangesHandler(e.user.uid);
+          })
+          .catch(error => {
+            Keyboard.dismiss();
+            if (error.code === 'auth/email-already-in-use') {
+              ToastAndroid.show('Email Already In Use!', ToastAndroid.SHORT);
+            } else if (error.code === 'auth/invalid-email') {
+              ToastAndroid.show('Email Is Invalid!', ToastAndroid.SHORT);
+            } else if (error.code === 'auth/weak-password') {
+              ToastAndroid.show('Weak Password!', ToastAndroid.SHORT);
+            } else {
+              ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+            }
+          });
+      } else {
+        Keyboard.dismiss();
+        ToastAndroid.show('Enter Email Address!', ToastAndroid.SHORT);
+      }
+    } else {
+      Keyboard.dismiss();
+      ToastAndroid.show('Both Password Are Different!', ToastAndroid.SHORT);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inputCont}>
-        <Text style={styles.labelText}>Name</Text>
-        <TextInput
-          value={value.name}
-          onChangeText={text => setValue({...value, name: text})}
-          style={styles.input}
-        />
-        <Text style={styles.labelText}>Username</Text>
-        <TextInput
-          value={value.username}
-          onChangeText={text => setValue({...value, username: text})}
-          style={styles.input}
-        />
         <Text style={styles.labelText}>Email Address</Text>
         <TextInput
           value={value.email}
@@ -128,6 +119,13 @@ const Register = ({navigation}) => {
           secureTextEntry
           value={value.password}
           onChangeText={text => setValue({...value, password: text})}
+          style={styles.input}
+        />
+        <Text style={styles.labelText}>Confirm Password</Text>
+        <TextInput
+          secureTextEntry
+          value={value.confirmPassword}
+          onChangeText={text => setValue({...value, confirmPassword: text})}
           style={styles.input}
         />
       </View>

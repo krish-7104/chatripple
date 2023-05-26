@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   FriendListViewName: {
-    fontSize: 20,
+    fontSize: 18,
     marginLeft: 12,
     color: 'black',
     fontFamily: 'Montserrat-SemiBold',
   },
   FriendListViewLastMsg: {
-    fontSize: 16,
+    fontSize: 14,
     marginLeft: 12,
     marginTop: 1,
     color: '#00000080',

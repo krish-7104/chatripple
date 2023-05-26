@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ToastAndroid,
+  Keyboard,
 } from 'react-native';
 import React, {useContext, useLayoutEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -52,28 +53,38 @@ const Login = ({navigation}) => {
   };
 
   const loginHandler = async () => {
-    auth()
-      .signInWithEmailAndPassword(value.email, value.password)
-      .then(res => {
-        getDataFromFirebase(res.user.uid);
-      })
-      .catch(error => {
-        if (
-          error.code === 'auth/wrong-password' ||
-          error.code === 'auth/user-not-found'
-        ) {
-          ToastAndroid.show('Invalid Credentials!', ToastAndroid.SHORT);
-        } else if (error.code === 'auth/too-many-requests') {
-          ToastAndroid.show('To Many Attempts, Try Later!', ToastAndroid.SHORT);
-        } else if (error.code === 'auth/user-disabled') {
-          ToastAndroid.show(
-            'User Disabled! Contact Developer',
-            ToastAndroid.SHORT,
-          );
-        } else {
-          ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
-        }
-      });
+    if (value.email) {
+      auth()
+        .signInWithEmailAndPassword(value.email, value.password)
+        .then(res => {
+          getDataFromFirebase(res.user.uid);
+        })
+        .catch(error => {
+          Keyboard.dismiss();
+          if (
+            error.code === 'auth/wrong-password' ||
+            error.code === 'auth/user-not-found'
+          ) {
+            ToastAndroid.show('Invalid Credentials!', ToastAndroid.SHORT);
+          } else if (error.code === 'auth/too-many-requests') {
+            ToastAndroid.show(
+              'To Many Attempts, Try Later!',
+              ToastAndroid.SHORT,
+            );
+          } else if (error.code === 'auth/user-disabled') {
+            ToastAndroid.show(
+              'User Disabled! Contact Developer',
+              ToastAndroid.SHORT,
+            );
+          } else {
+            Keyboard.dismiss();
+            ToastAndroid.show('Something Went Wrong!', ToastAndroid.SHORT);
+          }
+        });
+    } else {
+      Keyboard.dismiss();
+      ToastAndroid.show('Enter Email Address!', ToastAndroid.SHORT);
+    }
   };
 
   return (
@@ -142,7 +153,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     textAlign: 'right',
     width: '100%',
-    color: '#3266ff',
+    color: '#2563eb',
     fontWeight: '600',
     fontFamily: 'Montserrat-SemiBold',
   },

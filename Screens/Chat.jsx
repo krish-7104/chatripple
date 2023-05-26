@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, {
   useLayoutEffect,
@@ -92,7 +93,8 @@ const Chat = ({route, navigation}) => {
       method: 'post',
       url: 'https://fcm.googleapis.com/fcm/send',
       headers: {
-        Authorization: 'key=',
+        Authorization:
+          'key=AAAAmRqVX10:APA91bHAOsOhjuJq8dBEI-gQb4m2QFre99flg_wS4wD8f2bBGg6FSvF_nHgMn_HaNv6RHUvOlef9PightpMPjYHNq0yfXk6aoCPUv4n7-VMg0eQqRKvhFTy-B5HDXDW93xKdgJ4w-S2A',
         'Content-Type': 'application/json',
       },
       data: data,
@@ -152,38 +154,40 @@ const Chat = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        ref={scrollViewRef}
-        style={{flexGrow: 1}}
-        contentContainerStyle={{
-          paddingHorizontal: 26,
-          paddingVertical: 16,
-          flexGrow: 1,
-          alignItems: 'flex-start',
-        }}>
-        {chats &&
-          chats.map(chat => {
-            if (chat.senderId === contextData.data.uid) {
-              return (
-                <SenderCont
-                  key={chat.id}
-                  chat={chat}
-                  combinedId={combinedId}
-                  image={contextData.data.image}
-                />
-              );
-            } else if (chat.senderId === route.params.uid) {
-              return (
-                <ReceiverCont
-                  chat={chat}
-                  combinedId={combinedId}
-                  key={chat.id}
-                  image={route.params.image}
-                />
-              );
-            }
-          })}
-      </ScrollView>
+      <KeyboardAvoidingView style={{flex: 1}}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={{flexGrow: 1}}
+          contentContainerStyle={{
+            paddingHorizontal: 26,
+            paddingVertical: 15,
+            flexGrow: 1,
+            alignItems: 'flex-start',
+          }}>
+          {chats &&
+            chats.map(chat => {
+              if (chat.senderId === contextData.data.uid) {
+                return (
+                  <SenderCont
+                    key={chat.id}
+                    chat={chat}
+                    combinedId={combinedId}
+                    image={contextData.data.image}
+                  />
+                );
+              } else if (chat.senderId === route.params.uid) {
+                return (
+                  <ReceiverCont
+                    chat={chat}
+                    combinedId={combinedId}
+                    key={chat.id}
+                    image={route.params.image}
+                  />
+                );
+              }
+            })}
+        </ScrollView>
+      </KeyboardAvoidingView>
       <View style={styles.sendMessageCont}>
         <TextInput
           placeholder="Enter Message Here.."

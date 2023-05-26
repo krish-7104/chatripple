@@ -1,10 +1,19 @@
-import {SafeAreaView, StyleSheet, ScrollView, Button, Text} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  Button,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
 import FriendListView from './Components/FriendListView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
 import {PermissionsAndroid} from 'react-native';
+import AddFriend from 'react-native-vector-icons/MaterialIcons';
+import MenuIcon from 'react-native-vector-icons/Entypo';
 
 const Home = ({navigation}) => {
   useLayoutEffect(() => {
@@ -23,6 +32,9 @@ const Home = ({navigation}) => {
           </Text>
         );
       },
+      headerRight: () => {
+        return <MenuIcon name="dots-three-vertical" color="black" size={24} />;
+      },
     });
   }, [navigation]);
   const contextData = useContext(UserContext);
@@ -39,7 +51,6 @@ const Home = ({navigation}) => {
         ...userData._data,
         uid: user.uid,
       });
-      // getChatsHandler(user.uid);
     }
   };
   useEffect(() => {
@@ -57,7 +68,6 @@ const Home = ({navigation}) => {
       .onSnapshot(documentSnapshot => {
         setChat(documentSnapshot.data());
       });
-
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, [contextData.data.uid]);
@@ -82,11 +92,13 @@ const Home = ({navigation}) => {
               .then(() => console.log('User signed out!'))
           }
         />
-        <Button
-          title="Add Friend"
-          onPress={() => navigation.navigate('Add Friend')}
-        />
       </ScrollView>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.floatingBtn}
+        onPress={() => navigation.navigate('Add Friend')}>
+        <AddFriend name="person-add" color="white" size={24} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -96,5 +108,15 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     marginTop: 12,
+  },
+  floatingBtn: {
+    position: 'absolute',
+    bottom: 35,
+    right: 35,
+    backgroundColor: '#be123c',
+    elevation: 14,
+    padding: 16,
+    shadowColor: '#be123c',
+    borderRadius: 60,
   },
 });
