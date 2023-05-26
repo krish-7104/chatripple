@@ -12,7 +12,7 @@ const SenderCont = ({chat, combinedId, image}) => {
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
         flexDirection: 'row',
-        marginBottom: 26,
+        marginBottom: 28,
       }}>
       <Image
         source={{
@@ -38,22 +38,23 @@ export default SenderCont;
 
 const styles = StyleSheet.create({
   SenderMessage: {
-    backgroundColor: 'white',
+    backgroundColor: '#2563eb',
     paddingVertical: 10,
     paddingLeft: 20,
     paddingRight: 30,
     borderRadius: 10,
     position: 'relative',
     maxWidth: '85%',
-    fontSize: 15,
+    fontSize: 14,
     alignSelf: 'flex-end',
-    color: 'black',
+    color: 'white',
     fontFamily: 'Montserrat-Medium',
   },
   SenderMessageTime: {
     fontSize: 10,
     position: 'absolute',
     bottom: -16,
+    right: 10,
     color: 'black',
     fontFamily: 'Montserrat-Regular',
   },
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     height: 34,
     borderRadius: 60,
     zIndex: 1,
-    top: -5,
+    top: -10,
     right: -16,
   },
 });

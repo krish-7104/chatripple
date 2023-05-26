@@ -11,7 +11,7 @@ const ReceiverCont = ({chat, combinedId, image}) => {
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         flexDirection: 'row',
-        marginBottom: 26,
+        marginBottom: 28,
       }}>
       <Image
         source={{
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     position: 'relative',
     maxWidth: '85%',
-    fontSize: 15,
+    fontSize: 14,
     color: 'black',
     fontFamily: 'Montserrat-Medium',
   },
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     position: 'absolute',
     bottom: -16,
+    left: 10,
     color: 'black',
     fontFamily: 'Montserrat-Regular',
   },
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     height: 34,
     borderRadius: 60,
     zIndex: 1,
-    top: -5,
+    top: -10,
     left: -16,
   },
 });

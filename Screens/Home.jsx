@@ -1,11 +1,12 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useEffect, useLayoutEffect, useContext} from 'react';
+import React, {useEffect, useLayoutEffect, useContext, useState} from 'react';
 import {PermissionsAndroid} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
 
 const Home = ({navigation}) => {
+  const [loading, setLoading] = useState(true);
   const contextData = useContext(UserContext);
   const onAuthStateChanged = async user => {
     if (user) {
@@ -20,6 +21,7 @@ const Home = ({navigation}) => {
       });
       navigation.replace('Main');
     }
+    setLoading(false);
   };
   useEffect(() => {
     PermissionsAndroid.request(
@@ -37,20 +39,22 @@ const Home = ({navigation}) => {
     <View style={styles.container}>
       <Text style={styles.appName}>Chat Ripple</Text>
       <Text style={styles.subTitle}>End To End Decryption</Text>
-      <View style={styles.btnArea}>
-        <TouchableOpacity
-          style={styles.btnCont}
-          activeOpacity={0.4}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.btnText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btnCont}
-          activeOpacity={0.4}
-          onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.btnText}>Create Account</Text>
-        </TouchableOpacity>
-      </View>
+      {!loading && (
+        <View style={styles.btnArea}>
+          <TouchableOpacity
+            style={styles.btnCont}
+            activeOpacity={0.4}
+            onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.btnText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btnCont}
+            activeOpacity={0.4}
+            onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.btnText}>Create Account</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <Text style={styles.footerText}>Developed By Krish Jotaniya</Text>
     </View>
   );

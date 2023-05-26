@@ -81,7 +81,7 @@ const AddFriend = ({navigation}) => {
           [combinedId + '.lastMessage']: '',
         });
     }
-    navigation.navigate('Home');
+    navigation.replace('Main');
   };
   return (
     <SafeAreaView style={styles.container}>
