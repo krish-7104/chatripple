@@ -8,8 +8,7 @@ import {UserContext} from '../Context/context';
 const Home = ({navigation}) => {
   const contextData = useContext(UserContext);
   const onAuthStateChanged = async user => {
-    if (!user) navigation.replace('Register');
-    else {
+    if (user) {
       const userData = await firestore()
         .collection('users')
         .doc(user.uid)
