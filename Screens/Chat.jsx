@@ -39,7 +39,9 @@ const Chat = ({route, navigation}) => {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              justifyContent: 'center',
               marginLeft: -20,
+              marginVertical: 14,
             }}>
             <Image
               source={{
@@ -81,11 +83,12 @@ const Chat = ({route, navigation}) => {
       .collection('tokens')
       .doc(route.params.uid)
       .get();
+    console.log(user._data.token);
     var data = JSON.stringify({
       data: {},
       notification: {
         body: message,
-        title: route.params.name,
+        title: contextData.data.name,
       },
       to: user._data.token,
     });

@@ -1,7 +1,34 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useContext} from 'react';
+import {PermissionsAndroid} from 'react-native';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {UserContext} from '../Context/context';
 
 const Home = ({navigation}) => {
+  const contextData = useContext(UserContext);
+  const onAuthStateChanged = async user => {
+    if (!user) navigation.replace('Register');
+    else {
+      const userData = await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .get();
+      contextData.setData({
+        ...contextData.data,
+        ...userData._data,
+        uid: user.uid,
+      });
+      navigation.replace('Main');
+    }
+  };
+  useEffect(() => {
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,

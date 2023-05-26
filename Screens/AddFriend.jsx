@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   Image,
+  Keyboard,
 } from 'react-native';
 import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -47,6 +48,7 @@ const AddFriend = ({navigation}) => {
     );
   };
   const searchUserHandler = () => {
+    Keyboard.dismiss();
     getAllUserhandler();
   };
 

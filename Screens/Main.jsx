@@ -2,7 +2,6 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
-  Button,
   Text,
   View,
   TouchableOpacity,
@@ -13,7 +12,6 @@ import FriendListView from './Components/FriendListView';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
-import {PermissionsAndroid} from 'react-native';
 import AddFriend from 'react-native-vector-icons/MaterialIcons';
 import SettingIcon from 'react-native-vector-icons/Ionicons';
 
@@ -23,15 +21,17 @@ const Main = ({navigation}) => {
       title: 'Main',
       headerTitle: () => {
         return (
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: 'Montserrat-SemiBold',
-              color: 'black',
-              textAlign: 'center',
-            }}>
-            Chat Ripple
-          </Text>
+          <View style={{marginVertical: 20}}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: 'Montserrat-SemiBold',
+                color: 'black',
+                textAlign: 'center',
+              }}>
+              Chat Ripple
+            </Text>
+          </View>
         );
       },
       headerRight: () => {
@@ -47,15 +47,17 @@ const Main = ({navigation}) => {
             <TouchableOpacity
               activeOpacity={0.6}
               onPress={() => navigation.navigate('My Profile')}
-              style={{paddingRight: 12}}>
-              <Image
-                source={{
-                  uri: contextData.data.image
-                    ? contextData.data.image
-                    : 'https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`',
-                }}
-                style={styles.chatProfile}
-              />
+              style={{marginRight: 14}}>
+              {contextData.data && (
+                <Image
+                  source={{
+                    uri: contextData.data.image
+                      ? contextData.data.image
+                      : 'https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`',
+                  }}
+                  style={styles.chatProfile}
+                />
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.6}
@@ -71,22 +73,8 @@ const Main = ({navigation}) => {
   const [chats, setChat] = useState();
   const onAuthStateChanged = async user => {
     if (!user) navigation.replace('Register');
-    else {
-      const userData = await firestore()
-        .collection('users')
-        .doc(user.uid)
-        .get();
-      contextData.setData({
-        ...contextData.data,
-        ...userData._data,
-        uid: user.uid,
-      });
-    }
   };
   useEffect(() => {
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
