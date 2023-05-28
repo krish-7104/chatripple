@@ -2,6 +2,8 @@ import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import CryptoJS from 'react-native-crypto-js';
 import {useNavigation} from '@react-navigation/native';
+import FastImage from 'react-native-fast-image';
+
 const SenderCont = ({chat, combinedId, image, name}) => {
   const navigation = useNavigation();
   return (
@@ -38,10 +40,11 @@ const SenderCont = ({chat, combinedId, image, name}) => {
               date: chat.date.toDate().toString().replace(' GMT+0530', ''),
             })
           }>
-          <Image
+          <FastImage
             style={styles.senderImageMessage}
             source={{
               uri: chat.image,
+              priority: FastImage.priority.normal,
             }}
           />
         </TouchableOpacity>

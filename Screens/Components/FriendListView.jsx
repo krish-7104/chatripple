@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import {NavigationContext} from '@react-navigation/native';
 import CryptoJS from 'react-native-crypto-js';
 import {UserContext} from '../../Context/context';
+import FastImage from 'react-native-fast-image';
 
 const FriendListView = props => {
   const contextData = useContext(UserContext);
@@ -37,11 +38,12 @@ const FriendListView = props => {
         })
       }>
       {data && (
-        <Image
-          source={{
-            uri: data && data.image,
-          }}
+        <FastImage
           style={styles.chatProfile}
+          source={{
+            uri: data.image,
+            priority: FastImage.priority.normal,
+          }}
         />
       )}
       <View>
