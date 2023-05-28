@@ -24,6 +24,7 @@ import CryptoJS from 'react-native-crypto-js';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import axios from 'react-native-axios';
+import {SERVER_KEY} from '../Config';
 const Chat = ({route, navigation}) => {
   const contextData = useContext(UserContext);
   const [chats, setChats] = useState([]);
@@ -96,8 +97,7 @@ const Chat = ({route, navigation}) => {
       method: 'post',
       url: 'https://fcm.googleapis.com/fcm/send',
       headers: {
-        Authorization:
-          'key=AAAAmRqVX10:APA91bHAOsOhjuJq8dBEI-gQb4m2QFre99flg_wS4wD8f2bBGg6FSvF_nHgMn_HaNv6RHUvOlef9PightpMPjYHNq0yfXk6aoCPUv4n7-VMg0eQqRKvhFTy-B5HDXDW93xKdgJ4w-S2A',
+        Authorization: `key=${SERVER_KEY}`,
         'Content-Type': 'application/json',
       },
       data: data,

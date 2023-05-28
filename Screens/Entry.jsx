@@ -1,10 +1,20 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ToastAndroid,
+} from 'react-native';
 import React, {useEffect, useLayoutEffect, useContext, useState} from 'react';
 import {PermissionsAndroid} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
 import GoogleIcon from 'react-native-vector-icons/Ionicons';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {WEB_CLIENT_ID} from '../Config';
+
 const Entry = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const contextData = useContext(UserContext);
@@ -35,11 +45,25 @@ const Entry = ({navigation}) => {
       headerShown: false,
     });
   }, [navigation]);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: WEB_CLIENT_ID,
+    });
+  }, []);
+
+  const googleSignInBtnHandler = async () => {
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+    const {idToken} = await GoogleSignin.signIn();
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    return auth().signInWithCredential(googleCredential);
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Text style={styles.appName}>Chat Ripple</Text>
-      <Text style={styles.subTitle}>End To End Decryption</Text>
+      <Text style={styles.subTitle}>End To End Encryption</Text>
       {!loading && (
         <View style={styles.btnArea}>
           <TouchableOpacity
@@ -54,7 +78,14 @@ const Entry = ({navigation}) => {
             onPress={() => navigation.navigate('Register')}>
             <Text style={styles.btnText}>Create Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnGoogleCont} activeOpacity={0.6}>
+          <TouchableOpacity
+            style={styles.btnGoogleCont}
+            activeOpacity={0.6}
+            onPress={() =>
+              googleSignInBtnHandler().then(() =>
+                ToastAndroid.show('Login Successfull', ToastAndroid.BOTTOM),
+              )
+            }>
             <Text style={styles.btnGoogleText}>Continue With</Text>
             <GoogleIcon name="logo-google" size={20} color="black" />
           </TouchableOpacity>
