@@ -147,14 +147,24 @@ const Profile = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profileCont}>
-        <Image
-          source={{
-            uri: value.image
-              ? value.image
-              : `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
-          }}
-          style={styles.profile}
-        />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate('ImageViewer', {
+              image: value.image,
+              name: value.name,
+              username: value.username,
+            })
+          }>
+          <Image
+            source={{
+              uri: value.image
+                ? value.image
+                : `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
+            }}
+            style={styles.profile}
+          />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.uploadImageBtn}
           activeOpacity={0.4}

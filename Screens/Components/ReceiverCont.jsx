@@ -21,11 +21,31 @@ const ReceiverCont = ({chat, combinedId, image}) => {
         }}
         style={styles.ReceiveProfile}
       />
-      <Text style={styles.ReceiveMessage}>
-        {CryptoJS.AES.decrypt(chat.text, combinedId).toString(
-          CryptoJS.enc.Utf8,
-        )}
-      </Text>
+      {chat.text && (
+        <Text style={styles.ReceiveMessage}>
+          {CryptoJS.AES.decrypt(chat.text, combinedId).toString(
+            CryptoJS.enc.Utf8,
+          )}
+        </Text>
+      )}
+      {chat.image && (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate('ImageViewer', {
+              image: chat.image,
+              name,
+              date: chat.date.toDate().toString().replace(' GMT+0530', ''),
+            })
+          }>
+          <Image
+            style={styles.receiveImageMessage}
+            source={{
+              uri: chat.image,
+            }}
+          />
+        </TouchableOpacity>
+      )}
       <Text style={styles.ReceiveMessageTime}>
         {chat.date.toDate().toString().replace(' GMT+0530', '')}
       </Text>
@@ -64,5 +84,11 @@ const styles = StyleSheet.create({
     zIndex: 1,
     top: -10,
     left: -16,
+  },
+  receiveImageMessage: {
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+    borderRadius: 10,
   },
 });

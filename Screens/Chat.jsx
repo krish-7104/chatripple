@@ -70,7 +70,7 @@ const Chat = ({route, navigation}) => {
                   fontFamily: 'Montserrat-Medium',
                   color: 'black',
                 }}>
-                {route.params.username}
+                @{route.params.username}
               </Text>
             </View>
           </View>
