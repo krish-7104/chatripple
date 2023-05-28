@@ -96,6 +96,7 @@ const Login = ({navigation}) => {
       <View style={styles.inputCont}>
         <Text style={styles.labelText}>Email Address</Text>
         <TextInput
+          autoCapitalize="none"
           value={value.email}
           onChangeText={text => setValue({...value, email: text})}
           style={styles.input}

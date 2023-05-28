@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   subTitle: {
     color: '#00000090',
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: 18,
+    fontSize: 16,
     marginTop: 10,
   },
   btnCont: {
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   btnText: {
     textAlign: 'center',
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
   },
   btnArea: {
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   btnGoogleText: {
     textAlign: 'center',
     color: '#000',
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
     marginRight: 8,
   },

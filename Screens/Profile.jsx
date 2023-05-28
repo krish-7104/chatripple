@@ -130,6 +130,7 @@ const Profile = ({navigation}) => {
       <View style={styles.inputCont}>
         <Text style={styles.labelText}>Username</Text>
         <TextInput
+          autoCapitalize="none"
           value={value.username}
           onChangeText={text => setValue({...value, username: text})}
           style={styles.input}

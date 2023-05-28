@@ -35,6 +35,7 @@ const AddFriend = ({navigation}) => {
   }, [navigation]);
   const contextData = useContext(UserContext);
   const [search, setSearch] = useState('');
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     getAllUserhandler();
   }, []);
@@ -48,6 +49,7 @@ const AddFriend = ({navigation}) => {
     );
   };
   const searchUserHandler = () => {
+    setVisible(true);
     Keyboard.dismiss();
     getAllUserhandler();
   };
@@ -83,15 +85,20 @@ const AddFriend = ({navigation}) => {
     }
     navigation.replace('Home');
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchCont}>
         <TextInput
           placeholder="Enter Username"
           value={search}
-          onChangeText={text => setSearch(text)}
+          onChangeText={text => {
+            setSearch(text);
+            setVisible(false);
+          }}
           style={styles.searchInput}
           placeholderTextColor={'#00000050'}
+          autoCapitalize="none"
         />
         <TouchableOpacity
           activeOpacity={0.4}
@@ -101,45 +108,44 @@ const AddFriend = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <View style={styles.divider}></View>
-      {search && (
-        <ScrollView
-          contentContainerStyle={{
-            alignItems: 'center',
-          }}
-          style={styles.friendListCont}>
-          {users &&
-            users.map(user => {
-              if (search === user._data.username) {
-                return (
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={styles.chatViewCont}
-                    key={user._data.username}
-                    onPress={() =>
-                      addFriendHandler(
-                        user._ref._documentPath._parts[1],
-                        user._data.name,
-                        user._data.image,
-                      )
-                    }>
-                    <Image
-                      source={{
-                        uri: user._data.image,
-                      }}
-                      style={styles.chatProfile}
-                    />
-                    <View>
-                      <Text style={styles.chatViewName}>{user._data.name}</Text>
-                      {/* <Text style={styles.chatViewLastMsg}>
+      <ScrollView
+        contentContainerStyle={{
+          alignItems: 'center',
+        }}
+        style={styles.friendListCont}>
+        {visible &&
+          users &&
+          users.map(user => {
+            if (search === user._data.username) {
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.chatViewCont}
+                  key={user._data.username}
+                  onPress={() =>
+                    addFriendHandler(
+                      user._ref._documentPath._parts[1],
+                      user._data.name,
+                      user._data.image,
+                    )
+                  }>
+                  <Image
+                    source={{
+                      uri: user._data.image,
+                    }}
+                    style={styles.chatProfile}
+                  />
+                  <View>
+                    <Text style={styles.chatViewName}>{user._data.name}</Text>
+                    {/* <Text style={styles.chatViewLastMsg}>
                         {user._data.username}
                       </Text> */}
-                    </View>
-                  </TouchableOpacity>
-                );
-              }
-            })}
-        </ScrollView>
-      )}
+                  </View>
+                </TouchableOpacity>
+              );
+            }
+          })}
+      </ScrollView>
     </SafeAreaView>
   );
 };
