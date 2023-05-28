@@ -290,7 +290,7 @@ const Chat = ({route, navigation}) => {
         {uploading && (
           <ActivityIndicator
             size="small"
-            color="#0000ff"
+            color="#2563eb"
             style={{paddingHorizontal: 10, paddingVertical: 6}}
           />
         )}

@@ -182,7 +182,7 @@ const Profile = ({navigation}) => {
           {!loading && (
             <Text style={styles.uploadImageText}>Upload New Profile</Text>
           )}
-          {loading && <Text style={styles.uploadImageText}>Uploading</Text>}
+          {loading && <Text style={styles.uploadImageText}>Uploading...</Text>}
         </TouchableOpacity>
       </View>
       <View style={styles.inputCont}>
