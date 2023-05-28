@@ -1,10 +1,9 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import CryptoJS from 'react-native-crypto-js';
 import {useNavigation} from '@react-navigation/native';
-const ReceiverCont = ({chat, combinedId, image}) => {
+const ReceiverCont = ({chat, combinedId, image, name}) => {
   const navigation = useNavigation();
-
   return (
     <View
       style={{
@@ -17,9 +16,7 @@ const ReceiverCont = ({chat, combinedId, image}) => {
       }}>
       <Image
         source={{
-          uri: image
-            ? image
-            : 'https://image.lexica.art/full_jpg/7f973906-7787-4b73-8284-b6c794ec3b0b',
+          uri: image,
         }}
         style={styles.ReceiveProfile}
       />
@@ -89,8 +86,8 @@ const styles = StyleSheet.create({
   },
   receiveImageMessage: {
     width: 220,
-    height: 220,
-    resizeMode: 'contain',
+    height: undefined,
+    aspectRatio: 1,
     borderRadius: 10,
   },
 });

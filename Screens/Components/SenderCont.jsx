@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
 
   senderImageMessage: {
     width: 220,
-    height: 220,
-    resizeMode: 'contain',
+    height: undefined,
+    aspectRatio: 1,
     borderRadius: 10,
   },
 });

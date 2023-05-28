@@ -61,7 +61,7 @@ const Profile = ({navigation}) => {
       try {
         await messaging().registerDeviceForRemoteMessages();
         const token = await messaging().getToken();
-        firestore().collection('tokens').doc(uid).set({
+        firestore().collection('tokens').doc(contextData.data.uid).set({
           token,
         });
         await auth().currentUser.updateProfile(update);
@@ -102,7 +102,10 @@ const Profile = ({navigation}) => {
         name: value.name,
         image: value.image,
       });
-      navigation.replace('Home');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
+      });
     } else {
       ToastAndroid.show('Enter All Details!', ToastAndroid.SHORT);
     }
