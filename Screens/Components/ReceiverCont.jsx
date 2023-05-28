@@ -1,8 +1,10 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
 import CryptoJS from 'react-native-crypto-js';
-
+import {useNavigation} from '@react-navigation/native';
 const ReceiverCont = ({chat, combinedId, image}) => {
+  const navigation = useNavigation();
+
   return (
     <View
       style={{

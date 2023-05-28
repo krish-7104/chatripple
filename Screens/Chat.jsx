@@ -49,12 +49,22 @@ const Chat = ({route, navigation}) => {
               marginLeft: -20,
               marginVertical: 14,
             }}>
-            <Image
-              source={{
-                uri: route.params.image,
-              }}
-              style={styles.navAvatar}
-            />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                navigation.navigate('ImageViewer', {
+                  image: route.params.image,
+                  name: route.params.name,
+                  username: route.params.username,
+                })
+              }>
+              <Image
+                source={{
+                  uri: route.params.image,
+                }}
+                style={styles.navAvatar}
+              />
+            </TouchableOpacity>
             <View style={{marginLeft: 14}}>
               <Text
                 style={{

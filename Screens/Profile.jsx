@@ -15,6 +15,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import messaging from '@react-native-firebase/messaging';
+
 const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
   const [value, setValue] = useState({
@@ -57,6 +59,11 @@ const Profile = ({navigation}) => {
         photoURL: value.image,
       };
       try {
+        await messaging().registerDeviceForRemoteMessages();
+        const token = await messaging().getToken();
+        firestore().collection('tokens').doc(uid).set({
+          token,
+        });
         await auth().currentUser.updateProfile(update);
         firestore()
           .collection('users')
@@ -83,7 +90,7 @@ const Profile = ({navigation}) => {
           .doc(contextData.data.uid)
           .get();
         if (!user._exists) {
-          firestore().collection('chats').doc(contextData.data.uid).set({});
+          firestore().collection('userChats').doc(contextData.data.uid).set({});
         }
       } catch (error) {
         console.log(error);

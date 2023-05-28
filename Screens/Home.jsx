@@ -54,7 +54,7 @@ const Home = ({navigation}) => {
                   source={{
                     uri: contextData.data.image
                       ? contextData.data.image
-                      : 'https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`',
+                      : 'https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true',
                   }}
                   style={styles.chatProfile}
                 />

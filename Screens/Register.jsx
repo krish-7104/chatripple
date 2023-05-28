@@ -12,7 +12,6 @@ import React, {useContext, useState, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import {UserContext} from '../Context/context';
 import firestore from '@react-native-firebase/firestore';
-import messaging from '@react-native-firebase/messaging';
 
 const Register = ({navigation}) => {
   const [value, setValue] = useState({
@@ -40,11 +39,6 @@ const Register = ({navigation}) => {
     });
   }, [navigation]);
   const saveChangesHandler = async uid => {
-    await messaging().registerDeviceForRemoteMessages();
-    const token = await messaging().getToken();
-    firestore().collection('tokens').doc(uid).set({
-      token,
-    });
     try {
       firestore()
         .collection('users')

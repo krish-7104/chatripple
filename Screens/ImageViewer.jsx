@@ -37,7 +37,9 @@ const ImageViewer = ({route, navigation}) => {
                   fontFamily: 'Montserrat-Medium',
                   color: 'black',
                 }}>
-                {route.params.date ? route.params.date : route.params.username}
+                {route.params.date
+                  ? route.params.date
+                  : '@' + route.params.username}
               </Text>
             </View>
           </View>
