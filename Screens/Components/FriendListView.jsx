@@ -27,7 +27,7 @@ const FriendListView = props => {
   return (
     <TouchableOpacity
       style={styles.FriendListViewCont}
-      activeOpacity={0.8}
+      activeOpacity={0.9}
       onPress={() =>
         navigation.navigate('Chat', {
           uid: props.chat[1].userInfo.uid,
@@ -64,20 +64,20 @@ const styles = StyleSheet.create({
   FriendListViewCont: {
     backgroundColor: 'white',
     padding: 8,
-    width: '90%',
+    width: '92%',
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
     elevation: 4,
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   chatProfile: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 50,
   },
   FriendListViewName: {

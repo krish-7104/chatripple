@@ -163,7 +163,8 @@ const Chat = ({route, navigation}) => {
           style={{flexGrow: 1}}
           contentContainerStyle={{
             paddingHorizontal: 26,
-            paddingVertical: 15,
+            paddingTop: 20,
+            paddingBottom: 10,
             flexGrow: 1,
             alignItems: 'flex-start',
           }}>

@@ -50,7 +50,10 @@ const Login = ({navigation}) => {
     if (!user1._exists) {
       firestore().collection('userChats').doc(uid).set({});
     }
-    navigation.replace('Home');
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Home'}],
+    });
   };
 
   const loginHandler = async () => {
