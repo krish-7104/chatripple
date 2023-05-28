@@ -100,9 +100,11 @@ const Home = ({navigation}) => {
           height: '100%',
         }}>
         {chats &&
-          Object.entries(chats).map(chat => {
-            return <FriendListView key={chat[0]} chat={chat} />;
-          })}
+          Object.entries(chats)
+            ?.sort((a, b) => b[1].date - a[1].date)
+            .map(chat => {
+              return <FriendListView key={chat[0]} chat={chat} />;
+            })}
       </ScrollView>
       <TouchableOpacity
         activeOpacity={0.8}
