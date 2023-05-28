@@ -1,8 +1,9 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import CryptoJS from 'react-native-crypto-js';
-
-const SenderCont = ({chat, combinedId, image}) => {
+import {useNavigation} from '@react-navigation/native';
+const SenderCont = ({chat, combinedId, image, name}) => {
+  const navigation = useNavigation();
   return (
     <View
       key={chat.id}
@@ -16,17 +17,35 @@ const SenderCont = ({chat, combinedId, image}) => {
       }}>
       <Image
         source={{
-          uri: image
-            ? image
-            : 'https://image.lexica.art/full_jpg/7f973906-7787-4b73-8284-b6c794ec3b0b',
+          uri: image,
         }}
         style={styles.SenderProfile}
       />
-      <Text style={styles.SenderMessage}>
-        {CryptoJS.AES.decrypt(chat.text, combinedId).toString(
-          CryptoJS.enc.Utf8,
-        )}
-      </Text>
+      {chat.text && (
+        <Text style={styles.SenderMessage}>
+          {CryptoJS.AES.decrypt(chat.text, combinedId).toString(
+            CryptoJS.enc.Utf8,
+          )}
+        </Text>
+      )}
+      {chat.image && (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate('ImageViewer', {
+              image: chat.image,
+              name,
+              date: chat.date.toDate().toString().replace(' GMT+0530', ''),
+            })
+          }>
+          <Image
+            style={styles.senderImageMessage}
+            source={{
+              uri: chat.image,
+            }}
+          />
+        </TouchableOpacity>
+      )}
       <Text style={styles.SenderMessageTime}>
         {chat.date.toDate().toString().replace(' GMT+0530', '')}
       </Text>
@@ -66,5 +85,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
     top: -10,
     right: -16,
+  },
+
+  senderImageMessage: {
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+    borderRadius: 10,
   },
 });

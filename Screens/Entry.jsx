@@ -28,6 +28,7 @@ const Entry = ({navigation}) => {
         ...contextData.data,
         ...userData._data,
         uid: user.uid,
+        image: user.photoURL,
       });
       navigation.replace('Home');
     }

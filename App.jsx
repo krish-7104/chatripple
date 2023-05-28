@@ -12,6 +12,7 @@ import {UserState} from './Context/context';
 import Setting from './Screens/Setting';
 import Entry from './Screens/Entry';
 import Home from './Screens/Home';
+import ImageViewer from './Screens/ImageViewer';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -28,6 +29,7 @@ const App = () => {
           <Stack.Screen name="My Profile" component={Profile} />
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="Setting" component={Setting} />
+          <Stack.Screen name="ImageViewer" component={ImageViewer} />
           <Stack.Screen name="Add Friend" component={AddFriend} />
         </Stack.Navigator>
       </UserState>

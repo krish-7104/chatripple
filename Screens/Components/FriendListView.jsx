@@ -48,10 +48,16 @@ const FriendListView = props => {
         <Text style={styles.FriendListViewName}>{data && data.name}</Text>
         <Text style={styles.FriendListViewLastMsg}>
           {data &&
-            CryptoJS.AES.decrypt(
-              props.chat[1].lastMessage,
-              combinedId,
-            ).toString(CryptoJS.enc.Utf8)}
+          CryptoJS.AES.decrypt(props.chat[1].lastMessage, combinedId).toString(
+            CryptoJS.enc.Utf8,
+          ).length <= 30
+            ? CryptoJS.AES.decrypt(
+                props.chat[1].lastMessage,
+                combinedId,
+              ).toString(CryptoJS.enc.Utf8)
+            : CryptoJS.AES.decrypt(props.chat[1].lastMessage, combinedId)
+                .toString(CryptoJS.enc.Utf8)
+                .slice(0, 30) + '...'}
         </Text>
       </View>
     </TouchableOpacity>

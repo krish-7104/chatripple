@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ToastAndroid,
 } from 'react-native';
 import React, {
   useLayoutEffect,
@@ -17,6 +18,7 @@ import React, {
   useRef,
 } from 'react';
 import SendIcon from 'react-native-vector-icons/Ionicons';
+import UploadIcon from 'react-native-vector-icons/Ionicons';
 import {UserContext} from '../Context/context';
 import ReceiverCont from './Components/ReceiverCont';
 import SenderCont from './Components/SenderCont';
@@ -25,11 +27,14 @@ import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import axios from 'react-native-axios';
 import {SERVER_KEY} from '../Config';
+import {launchImageLibrary} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 const Chat = ({route, navigation}) => {
   const contextData = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const scrollViewRef = useRef(null);
   const [message, setMessage] = useState('');
+  const [media, setMedia] = useState('');
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Second Page',
@@ -79,20 +84,30 @@ const Chat = ({route, navigation}) => {
       ? route.params.uid + contextData.data.uid
       : contextData.data.uid + route.params.uid;
 
-  const sendNotification = async () => {
+  const sendNotification = async type => {
     const user = await firestore()
       .collection('tokens')
       .doc(route.params.uid)
       .get();
-    console.log(user._data.token);
-    var data = JSON.stringify({
-      data: {},
-      notification: {
-        body: message,
-        title: contextData.data.name,
-      },
-      to: user._data.token,
-    });
+    if (type === 'media') {
+      var data = JSON.stringify({
+        data: {},
+        notification: {
+          title: contextData.data.name,
+          imageUrl: media,
+        },
+        to: user._data.token,
+      });
+    } else if (type === 'text') {
+      var data = JSON.stringify({
+        data: {},
+        notification: {
+          body: message,
+          title: contextData.data.name,
+        },
+        to: user._data.token,
+      });
+    }
     var config = {
       method: 'post',
       url: 'https://fcm.googleapis.com/fcm/send',
@@ -111,15 +126,46 @@ const Chat = ({route, navigation}) => {
       });
   };
   const sendMessageHandler = () => {
-    sendNotification();
-    let encryptMessage = CryptoJS.AES.encrypt(message, combinedId).toString();
+    if (message) {
+      sendNotification('text');
+      let encryptMessage = CryptoJS.AES.encrypt(message, combinedId).toString();
+      firestore()
+        .collection('chats')
+        .doc(combinedId)
+        .update({
+          messages: firestore.FieldValue.arrayUnion({
+            id: uuid.v4(),
+            text: encryptMessage,
+            senderId: contextData.data.uid,
+            date: firestore.Timestamp.now(),
+          }),
+        });
+      firestore()
+        .collection('userChats')
+        .doc(contextData.data.uid)
+        .update({
+          [combinedId + '.lastMessage']: encryptMessage,
+          [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
+        });
+      firestore()
+        .collection('userChats')
+        .doc(route.params.uid)
+        .update({
+          [combinedId + '.lastMessage']: encryptMessage,
+          [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
+        });
+      setMessage('');
+    }
+  };
+  const sendMediaHandler = link => {
+    sendNotification('media');
     firestore()
       .collection('chats')
       .doc(combinedId)
       .update({
         messages: firestore.FieldValue.arrayUnion({
           id: uuid.v4(),
-          text: encryptMessage,
+          image: link,
           senderId: contextData.data.uid,
           date: firestore.Timestamp.now(),
         }),
@@ -128,17 +174,17 @@ const Chat = ({route, navigation}) => {
       .collection('userChats')
       .doc(contextData.data.uid)
       .update({
-        [combinedId + '.lastMessage']: encryptMessage,
+        [combinedId + '.lastMessage']: 'Image',
         [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
       });
     firestore()
       .collection('userChats')
       .doc(route.params.uid)
       .update({
-        [combinedId + '.lastMessage']: encryptMessage,
+        [combinedId + '.lastMessage']: 'Image',
         [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
       });
-    setMessage('');
+    setMedia('');
   };
 
   useEffect(() => {
@@ -154,6 +200,43 @@ const Chat = ({route, navigation}) => {
   useEffect(() => {
     scrollViewRef.current.scrollToEnd({animated: true});
   }, [chats]);
+
+  const selectImageHandler = () => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
+      if (response.didCancel) {
+        ToastAndroid.show('Image upload canceled', ToastAndroid.SHORT);
+      } else if (response.error) {
+        ToastAndroid.show('Image Upload Error', ToastAndroid.SHORT);
+        console.log('Image upload error:', response.error);
+      } else {
+        uploadImageHandler(response);
+      }
+    });
+  };
+
+  const uploadImageHandler = response => {
+    const reference = storage().ref(`/Users Media/${uuid.v4()}`);
+    const imagePath = response.assets[0].uri;
+    const uploadTask = reference.putFile(imagePath);
+    uploadTask.on(
+      'state_changed',
+      snapshot => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% complete`);
+      },
+      error => {
+        ToastAndroid.show('Image Upload Error!', ToastAndroid.SHORT);
+        console.log('Image upload error:', error);
+      },
+      () => {
+        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+          setMedia(downloadURL);
+          sendMediaHandler(downloadURL);
+        });
+      },
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -177,6 +260,7 @@ const Chat = ({route, navigation}) => {
                     chat={chat}
                     combinedId={combinedId}
                     image={contextData.data.image}
+                    name={contextData.data.name}
                   />
                 );
               } else if (chat.senderId === route.params.uid) {
@@ -186,6 +270,7 @@ const Chat = ({route, navigation}) => {
                     combinedId={combinedId}
                     key={chat.id}
                     image={route.params.image}
+                    name={route.params.name}
                   />
                 );
               }
@@ -200,6 +285,12 @@ const Chat = ({route, navigation}) => {
           value={message}
           onChangeText={text => setMessage(text)}
         />
+        <TouchableOpacity
+          style={styles.uploadBtn}
+          activeOpacity={0.8}
+          onPress={selectImageHandler}>
+          <UploadIcon name="attach-outline" color="black" size={28} />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.sendBtns}
           activeOpacity={0.8}
@@ -240,11 +331,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     elevation: 10,
   },
+  uploadBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderRadius: 6,
+  },
   sendBtns: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginRight: 16,
-    // backgroundColor: '#f2f2f2',
     display: 'flex',
     justifyContent: 'space-evenly',
     alignItems: 'center',

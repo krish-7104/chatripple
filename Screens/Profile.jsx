@@ -134,8 +134,9 @@ const Profile = ({navigation}) => {
   const selectImageHandler = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
       if (response.didCancel) {
-        console.log('Image upload canceled');
+        ToastAndroid.show('Image upload canceled', ToastAndroid.SHORT);
       } else if (response.error) {
+        ToastAndroid.show('Image Upload Error', ToastAndroid.SHORT);
         console.log('Image upload error:', response.error);
       } else {
         uploadImageHandler(response);
