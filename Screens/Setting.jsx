@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   ToastAndroid,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -45,6 +46,20 @@ const Setting = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.btnCont}
+        activeOpacity={0.4}
+        onPress={() => Linking.openURL('https://krishjotaniya.live')}>
+        <Text style={styles.btnText}>Developer</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.btnCont}
+        activeOpacity={0.4}
+        onPress={() =>
+          Linking.openURL('https://krishjotaniya.live/contactme?ref=chatripple')
+        }>
+        <Text style={styles.btnText}>Feedback</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.btnCont}
         activeOpacity={0.4}
