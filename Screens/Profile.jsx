@@ -15,7 +15,6 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
-
 const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
   const [value, setValue] = useState({
@@ -23,7 +22,7 @@ const Profile = ({navigation}) => {
     username: '',
     image: '',
   });
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     setValue({
       name: contextData.data.name,
@@ -119,13 +118,13 @@ const Profile = ({navigation}) => {
       () => {
         uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
           setValue({...value, image: downloadURL});
-          updateProfilePhotoHandler(downloadURL);
           contextData.setData({
             ...contextData.data,
             username: value.username,
             name: value.name,
-            image: value.image,
+            image: downloadURL,
           });
+          setLoading(false);
         });
       },
     );
@@ -139,6 +138,7 @@ const Profile = ({navigation}) => {
         ToastAndroid.show('Image Upload Error', ToastAndroid.SHORT);
         console.log('Image upload error:', response.error);
       } else {
+        setLoading(true);
         uploadImageHandler(response);
       }
     });
@@ -168,8 +168,11 @@ const Profile = ({navigation}) => {
         <TouchableOpacity
           style={styles.uploadImageBtn}
           activeOpacity={0.4}
-          onPress={selectImageHandler}>
-          <Text style={styles.uploadImageText}>Upload New Profile</Text>
+          onPress={!loading && selectImageHandler}>
+          {!loading && (
+            <Text style={styles.uploadImageText}>Upload New Profile</Text>
+          )}
+          {loading && <Text style={styles.uploadImageText}>Uploading</Text>}
         </TouchableOpacity>
       </View>
       <View style={styles.inputCont}>

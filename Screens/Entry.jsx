@@ -28,9 +28,14 @@ const Entry = ({navigation}) => {
         ...contextData.data,
         ...userData._data,
         uid: user.uid,
+        name: user.displayName,
         image: user.photoURL,
       });
-      navigation.replace('Home');
+      if (userData._exists) {
+        navigation.replace('Home');
+      } else {
+        navigation.replace('My Profile');
+      }
     }
     setLoading(false);
   };
