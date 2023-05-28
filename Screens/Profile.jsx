@@ -13,6 +13,8 @@ import React, {useContext, useEffect, useState, useLayoutEffect} from 'react';
 import {UserContext} from '../Context/context';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {launchImageLibrary} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 
 const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
@@ -48,23 +50,6 @@ const Profile = ({navigation}) => {
     });
   }, [navigation]);
 
-  const nameHandler = e => {
-    setValue({...value, name: e});
-    if (value.image === '') {
-      if (value.name) {
-        setValue({
-          ...value,
-          image: `https://ui-avatars.com/api/?name=${value.name}&size=512&rounded=true`,
-        });
-      } else {
-        setValue({
-          ...value,
-          image: `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,
-        });
-      }
-    }
-  };
-
   const saveChangesHandler = async () => {
     Keyboard.dismiss();
     if (value.username && value.name) {
@@ -78,9 +63,14 @@ const Profile = ({navigation}) => {
           .collection('users')
           .doc(contextData.data.uid)
           .set({
-            name: value.name ? value.name : '',
-            image: value.image ? value.image : '',
-            username: value.username ? value.username : '',
+            name: value.name,
+            image: value.image
+              ? value.image
+              : `https://ui-avatars.com/api/?name=${
+                  value.name ? value.name : 'Chat Ripple'
+                }&size=512&rounded=true`,
+            username: value.username,
+            date: firestore.Timestamp.now(),
           })
           .then(() => {
             ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
@@ -112,6 +102,47 @@ const Profile = ({navigation}) => {
     }
   };
 
+  const uploadImageHandler = response => {
+    const reference = storage().ref(`/Profile Images/${contextData.data.uid}`);
+    const imagePath = response.assets[0].uri;
+    const uploadTask = reference.putFile(imagePath);
+    uploadTask.on(
+      'state_changed',
+      snapshot => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% complete`);
+      },
+      error => {
+        console.log('Image upload error:', error);
+      },
+      () => {
+        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+          setValue({...value, image: downloadURL});
+          updateProfilePhotoHandler(downloadURL);
+          contextData.setData({
+            ...contextData.data,
+            username: value.username,
+            name: value.name,
+            image: value.image,
+          });
+        });
+      },
+    );
+  };
+
+  const selectImageHandler = () => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
+      if (response.didCancel) {
+        console.log('Image upload canceled');
+      } else if (response.error) {
+        console.log('Image upload error:', response.error);
+      } else {
+        uploadImageHandler(response);
+      }
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profileCont}>
@@ -123,9 +154,12 @@ const Profile = ({navigation}) => {
           }}
           style={styles.profile}
         />
-        {/* <TouchableOpacity style={styles.uploadImageBtn} activeOpacity={0.4}>
-          <Text style={styles.uploadImageText}>Upload Profile</Text>
-        </TouchableOpacity> */}
+        <TouchableOpacity
+          style={styles.uploadImageBtn}
+          activeOpacity={0.4}
+          onPress={selectImageHandler}>
+          <Text style={styles.uploadImageText}>Upload New Profile</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.inputCont}>
         <Text style={styles.labelText}>Username</Text>
@@ -138,7 +172,7 @@ const Profile = ({navigation}) => {
         <Text style={styles.labelText}>Display Name</Text>
         <TextInput
           value={value.name}
-          onChangeText={nameHandler}
+          onChangeText={text => setValue({...value, name: text})}
           style={styles.input}
         />
         <TouchableOpacity
@@ -184,9 +218,9 @@ const styles = StyleSheet.create({
   uploadImageText: {
     fontFamily: 'Montserrat-SemiBold',
     color: '#2563eb',
-    fontSize: 14,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    fontSize: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
   },
   inputCont: {
     width: '85%',
@@ -222,7 +256,7 @@ const styles = StyleSheet.create({
   btnText: {
     textAlign: 'center',
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
   },
 });
