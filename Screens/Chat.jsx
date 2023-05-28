@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import React, {
   useLayoutEffect,
@@ -30,11 +31,11 @@ import {SERVER_KEY} from '../Config';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 const Chat = ({route, navigation}) => {
+  const [uploading, setUploading] = useState(false);
   const contextData = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const scrollViewRef = useRef(null);
   const [message, setMessage] = useState('');
-  const [media, setMedia] = useState('');
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Second Page',
@@ -94,47 +95,36 @@ const Chat = ({route, navigation}) => {
       ? route.params.uid + contextData.data.uid
       : contextData.data.uid + route.params.uid;
 
-  const sendNotification = async type => {
+  const sendNotification = async () => {
     const user = await firestore()
       .collection('tokens')
       .doc(route.params.uid)
       .get();
-    if (type === 'media') {
-      var data = JSON.stringify({
-        data: {},
-        notification: {
-          title: contextData.data.name,
-          imageUrl: media,
-        },
-        to: user._data.token,
-      });
-    } else if (type === 'text') {
-      var data = JSON.stringify({
-        data: {},
-        notification: {
-          body: message,
-          title: contextData.data.name,
-        },
-        to: user._data.token,
-      });
-    }
-    var config = {
-      method: 'post',
-      url: 'https://fcm.googleapis.com/fcm/send',
-      headers: {
-        Authorization: `key=${SERVER_KEY}`,
-        'Content-Type': 'application/json',
+    const payload = {
+      notification: {
+        body: message ? message : 'Sent You An Image',
+        title: contextData.data.name,
       },
-      data: data,
+      to: user._data.token,
     };
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+
+    const headers = {
+      Authorization: `key=${SERVER_KEY}`,
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      const response = await axios.post(
+        'https://fcm.googleapis.com/fcm/send',
+        payload,
+        {headers},
+      );
+      console.log('Notification sent:', response.data);
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
   };
+
   const sendMessageHandler = () => {
     if (message) {
       sendNotification('text');
@@ -168,6 +158,10 @@ const Chat = ({route, navigation}) => {
     }
   };
   const sendMediaHandler = link => {
+    let encryptMessage = CryptoJS.AES.encrypt(
+      'Sent You An Image',
+      combinedId,
+    ).toString();
     sendNotification('media');
     firestore()
       .collection('chats')
@@ -184,17 +178,17 @@ const Chat = ({route, navigation}) => {
       .collection('userChats')
       .doc(contextData.data.uid)
       .update({
-        [combinedId + '.lastMessage']: 'Image',
+        [combinedId + '.lastMessage']: encryptMessage,
         [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
       });
     firestore()
       .collection('userChats')
       .doc(route.params.uid)
       .update({
-        [combinedId + '.lastMessage']: 'Image',
+        [combinedId + '.lastMessage']: encryptMessage,
         [combinedId + '.date']: firestore.FieldValue.serverTimestamp(),
       });
-    setMedia('');
+    setUploading(false);
   };
 
   useEffect(() => {
@@ -214,12 +208,11 @@ const Chat = ({route, navigation}) => {
   const selectImageHandler = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
       if (response.didCancel) {
-        ToastAndroid.show('Image upload canceled', ToastAndroid.SHORT);
       } else if (response.error) {
-        ToastAndroid.show('Image Upload Error', ToastAndroid.SHORT);
-        console.log('Image upload error:', response.error);
+        ToastAndroid.show('Image Select Error', ToastAndroid.SHORT);
       } else {
         uploadImageHandler(response);
+        setUploading(true);
       }
     });
   };
@@ -241,7 +234,6 @@ const Chat = ({route, navigation}) => {
       },
       () => {
         uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-          setMedia(downloadURL);
           sendMediaHandler(downloadURL);
         });
       },
@@ -295,16 +287,25 @@ const Chat = ({route, navigation}) => {
           value={message}
           onChangeText={text => setMessage(text)}
         />
-        <TouchableOpacity
-          style={styles.uploadBtn}
-          activeOpacity={0.8}
-          onPress={selectImageHandler}>
-          <UploadIcon name="attach-outline" color="black" size={28} />
-        </TouchableOpacity>
+        {uploading && (
+          <ActivityIndicator
+            size="small"
+            color="#0000ff"
+            style={{paddingHorizontal: 10, paddingVertical: 6}}
+          />
+        )}
+        {!uploading && (
+          <TouchableOpacity
+            style={styles.uploadBtn}
+            activeOpacity={0.8}
+            onPress={selectImageHandler}>
+            <UploadIcon name="attach-outline" color="black" size={28} />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.sendBtns}
           activeOpacity={0.8}
-          onPress={sendMessageHandler}>
+          onPress={!uploading && sendMessageHandler}>
           <SendIcon name="send-outline" color="black" size={24} />
         </TouchableOpacity>
       </View>
