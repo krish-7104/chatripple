@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -33,8 +34,10 @@ const PasswordReset = ({navigation}) => {
   const resetLinkHandler = async () => {
     try {
       const res = await auth().sendPasswordResetEmail(email);
-      console.log(res);
-      setSend(true);
+      ToastAndroid.show(
+        'Reset Password Link Sent Successfully!',
+        ToastAndroid.LONG,
+      );
     } catch (error) {
       console.log(error);
     }
@@ -54,10 +57,6 @@ const PasswordReset = ({navigation}) => {
           onPress={resetLinkHandler}>
           <Text style={styles.btnText}>Send Reset Link</Text>
         </TouchableOpacity>
-        {/* <Text style={styles.sendText}>
-          Reset Link has been sent, if not received kindly check in the Spam
-          Section!
-        </Text> */}
       </View>
     </View>
   );

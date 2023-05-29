@@ -1,12 +1,27 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {NavigationContext} from '@react-navigation/native';
 import CryptoJS from 'react-native-crypto-js';
 import {UserContext} from '../../Context/context';
 import FastImage from 'react-native-fast-image';
+import messaging from '@react-native-firebase/messaging';
 
 const FriendListView = props => {
+  const [notify, setNotify] = useState();
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      setNotify(remoteMessage.notification.title);
+    });
+    return unsubscribe;
+  }, []);
   const contextData = useContext(UserContext);
   let combinedId =
     props.chat[1].userInfo.uid > contextData.data.uid
@@ -29,14 +44,15 @@ const FriendListView = props => {
     <TouchableOpacity
       style={styles.FriendListViewCont}
       activeOpacity={0.9}
-      onPress={() =>
+      onPress={() => {
         navigation.navigate('Chat', {
           uid: props.chat[1].userInfo.uid,
           name: data.name,
           image: data.image,
           username: data.username,
-        })
-      }>
+        });
+        setNotify();
+      }}>
       {data && (
         <FastImage
           style={styles.chatProfile}
@@ -46,8 +62,22 @@ const FriendListView = props => {
           }}
         />
       )}
-      <View>
+      <View style={{position: 'relative', width: '85%'}}>
         <Text style={styles.FriendListViewName}>{data && data.name}</Text>
+        {data && notify === data.name && (
+          <View
+            style={{
+              backgroundColor: '#2563eb',
+              padding: 6,
+              borderRadius: 50,
+              elevation: 10,
+              width: 4,
+              right: 2,
+              position: 'absolute',
+              shadowColor: '#2563eb',
+              top: 0,
+            }}></View>
+        )}
         <Text style={styles.FriendListViewLastMsg}>
           {data &&
           CryptoJS.AES.decrypt(props.chat[1].lastMessage, combinedId).toString(
