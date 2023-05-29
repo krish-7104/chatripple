@@ -32,9 +32,15 @@ const Entry = ({navigation}) => {
         image: user.photoURL,
       });
       if (userData._exists) {
-        navigation.replace('Home');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Home'}],
+        });
       } else {
-        navigation.replace('My Profile');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'My Profile'}],
+        });
       }
     }
     setLoading(false);

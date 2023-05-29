@@ -27,9 +27,14 @@ const Profile = ({navigation}) => {
   useEffect(() => {
     setValue({
       name: contextData.data.name,
-      image: contextData.data.image,
+      image: contextData.data.image
+        ? contextData.data.image
+        : `https://ui-avatars.com/api/?name=${
+            contextData.data.name ? contextData.data.name : 'Chat Ripple'
+          }&size=512&rounded=true`,
       username: contextData.data.username,
     });
+    console.log(contextData.data);
   }, [contextData]);
 
   useLayoutEffect(() => {
@@ -55,11 +60,7 @@ const Profile = ({navigation}) => {
     if (value.username && value.name) {
       const update = {
         displayName: value.name,
-        photoURL: value.image
-          ? value.image
-          : `https://ui-avatars.com/api/?name=${
-              value.name ? value.name : 'Chat Ripple'
-            }&size=512&rounded=true`,
+        photoURL: value.image,
       };
       try {
         await auth().currentUser.updateProfile(update);
@@ -68,11 +69,7 @@ const Profile = ({navigation}) => {
           .doc(contextData.data.uid)
           .set({
             name: value.name,
-            image: value.image
-              ? value.image
-              : `https://ui-avatars.com/api/?name=${
-                  value.name ? value.name : 'Chat Ripple'
-                }&size=512&rounded=true`,
+            image: value.image,
             username: value.username,
             date: firestore.Timestamp.now(),
           })

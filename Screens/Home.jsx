@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
 import FriendListView from './Components/FriendListView';
@@ -20,15 +21,10 @@ import messaging from '@react-native-firebase/messaging';
 const Home = ({navigation}) => {
   const contextData = useContext(UserContext);
   useEffect(() => {
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      navigation.navigate('Chat', {
-        uid: remoteMessage.data.uid,
-        name: remoteMessage.data.name,
-        image: remoteMessage.data.image,
-        username: remoteMessage.data.username,
-      });
-    });
-    messaging().onNotificationOpenedApp(async remoteMessage => {
       navigation.navigate('Chat', {
         uid: remoteMessage.data.uid,
         name: remoteMessage.data.name,
@@ -48,11 +44,6 @@ const Home = ({navigation}) => {
           });
         }
       });
-    // const unsubscribe = messaging().onMessage(async remoteMessage => {
-    //   Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    // });
-
-    // return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -103,7 +94,13 @@ const Home = ({navigation}) => {
               {contextData.data && (
                 <Image
                   source={{
-                    uri: contextData.data.image && contextData.data.image,
+                    uri: contextData.data.image
+                      ? contextData.data.image
+                      : `https://ui-avatars.com/api/?name=${
+                          contextData.data.name
+                            ? contextData.data.name
+                            : 'Chat Ripple'
+                        }&size=512&rounded=true`,
                   }}
                   style={styles.chatProfile}
                 />
