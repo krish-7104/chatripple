@@ -93,12 +93,13 @@ const AddFriend = ({navigation}) => {
           placeholder="Enter Username"
           value={search}
           onChangeText={text => {
-            setSearch(text);
+            setSearch(text.replace(' ', ''));
             setVisible(false);
           }}
           style={styles.searchInput}
           placeholderTextColor={'#00000050'}
           autoCapitalize="none"
+          onSubmitEditing={searchUserHandler}
         />
         <TouchableOpacity
           activeOpacity={0.4}

@@ -288,10 +288,11 @@ const Chat = ({route, navigation}) => {
       </KeyboardAvoidingView>
       <View style={styles.sendMessageCont}>
         <TextInput
-          placeholder="Enter Message Here.."
+          placeholder="Enter Message Here..."
           style={styles.textInput}
           placeholderTextColor={'#00000080'}
           value={message}
+          onSubmitEditing={!uploading && sendMessageHandler}
           onChangeText={text => setMessage(text)}
         />
         {uploading && (

@@ -184,7 +184,7 @@ const Profile = ({navigation}) => {
           autoCapitalize="none"
           value={value.username}
           onChangeText={text =>
-            setValue({...value, username: text.toLowerCase()})
+            setValue({...value, username: text.toLowerCase().replace(' ', '')})
           }
           style={styles.input}
         />
