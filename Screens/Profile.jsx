@@ -59,11 +59,6 @@ const Profile = ({navigation}) => {
         photoURL: value.image,
       };
       try {
-        await messaging().registerDeviceForRemoteMessages();
-        const token = await messaging().getToken();
-        firestore().collection('tokens').doc(contextData.data.uid).set({
-          token,
-        });
         await auth().currentUser.updateProfile(update);
         firestore()
           .collection('users')

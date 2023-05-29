@@ -19,6 +19,7 @@ import messaging from '@react-native-firebase/messaging';
 
 const Home = ({navigation}) => {
   useEffect(() => {
+    setTokenHandler();
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       navigation.navigate('Chat', {
         uid: remoteMessage.data.uid,
@@ -53,6 +54,21 @@ const Home = ({navigation}) => {
 
     // return unsubscribe;
   }, []);
+
+  const setTokenHandler = async () => {
+    const tokenCheck = await firestore()
+      .collection('tokens')
+      .doc(contextData.data.uid)
+      .get();
+    if (!tokenCheck._exists) {
+      await messaging().registerDeviceForRemoteMessages();
+      const token = await messaging().getToken();
+      firestore().collection('tokens').doc(contextData.data.uid).set({
+        token,
+      });
+    }
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Home',
@@ -124,7 +140,6 @@ const Home = ({navigation}) => {
       .onSnapshot(documentSnapshot => {
         setChat(documentSnapshot.data());
       });
-    // Stop listening for updates when no longer required
     return () => subscriber();
   }, [contextData.data.uid]);
 

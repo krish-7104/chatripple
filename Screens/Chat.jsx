@@ -219,6 +219,7 @@ const Chat = ({route, navigation}) => {
       } else {
         uploadImageHandler(response);
         setUploading(true);
+        ToastAndroid.show('Sending...', ToastAndroid.SHORT);
       }
     });
   };

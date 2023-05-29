@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
 import React, {useLayoutEffect} from 'react';
+import FastImage from 'react-native-fast-image';
 
 const ImageViewer = ({route, navigation}) => {
   useLayoutEffect(() => {
@@ -49,11 +50,13 @@ const ImageViewer = ({route, navigation}) => {
   }, [navigation]);
   return (
     <View style={styles.container}>
-      <Image
+      <FastImage
+        style={styles.imageView}
         source={{
           uri: route.params.image,
+          priority: FastImage.priority.normal,
         }}
-        style={styles.imageView}
+        resizeMode={FastImage.resizeMode.contain}
       />
     </View>
   );
@@ -70,7 +73,6 @@ const styles = StyleSheet.create({
   imageView: {
     flex: 1,
     width: '100%',
-    height: 300,
-    resizeMode: 'contain',
+    height: null,
   },
 });
