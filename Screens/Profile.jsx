@@ -15,7 +15,6 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
-import messaging from '@react-native-firebase/messaging';
 
 const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
@@ -56,7 +55,11 @@ const Profile = ({navigation}) => {
     if (value.username && value.name) {
       const update = {
         displayName: value.name,
-        photoURL: value.image,
+        photoURL: value.image
+          ? value.image
+          : `https://ui-avatars.com/api/?name=${
+              value.name ? value.name : 'Chat Ripple'
+            }&size=512&rounded=true`,
       };
       try {
         await auth().currentUser.updateProfile(update);
@@ -138,9 +141,7 @@ const Profile = ({navigation}) => {
   const selectImageHandler = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
       if (response.didCancel) {
-        ToastAndroid.show('Image upload canceled', ToastAndroid.SHORT);
       } else if (response.error) {
-        ToastAndroid.show('Image Upload Error', ToastAndroid.SHORT);
         console.log('Image upload error:', response.error);
       } else {
         setLoading(true);

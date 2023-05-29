@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import CryptoJS from 'react-native-crypto-js';
 import {useNavigation} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';

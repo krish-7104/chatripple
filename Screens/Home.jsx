@@ -18,8 +18,8 @@ import SettingIcon from 'react-native-vector-icons/Ionicons';
 import messaging from '@react-native-firebase/messaging';
 
 const Home = ({navigation}) => {
+  const contextData = useContext(UserContext);
   useEffect(() => {
-    setTokenHandler();
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       navigation.navigate('Chat', {
         uid: remoteMessage.data.uid,
@@ -55,18 +55,16 @@ const Home = ({navigation}) => {
     // return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    setTokenHandler();
+  }, [contextData.data.uid]);
+
   const setTokenHandler = async () => {
-    const tokenCheck = await firestore()
-      .collection('tokens')
-      .doc(contextData.data.uid)
-      .get();
-    if (!tokenCheck._exists) {
-      await messaging().registerDeviceForRemoteMessages();
-      const token = await messaging().getToken();
-      firestore().collection('tokens').doc(contextData.data.uid).set({
-        token,
-      });
-    }
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+    firestore().collection('tokens').doc(contextData.data.uid).set({
+      token,
+    });
   };
 
   useLayoutEffect(() => {
@@ -102,12 +100,10 @@ const Home = ({navigation}) => {
               activeOpacity={0.6}
               onPress={() => navigation.navigate('My Profile')}
               style={{marginRight: 14}}>
-              {contextData.data && (
+              {contextData.data.image && (
                 <Image
                   source={{
-                    uri: contextData.data.image
-                      ? contextData.data.image
-                      : 'https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true',
+                    uri: contextData.data.image,
                   }}
                   style={styles.chatProfile}
                 />
@@ -123,7 +119,6 @@ const Home = ({navigation}) => {
       },
     });
   }, [navigation]);
-  const contextData = useContext(UserContext);
   const [chats, setChat] = useState();
   const onAuthStateChanged = async user => {
     if (!user) navigation.replace('Register');
