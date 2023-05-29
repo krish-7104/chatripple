@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
 import FriendListView from './Components/FriendListView';
@@ -14,8 +15,44 @@ import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../Context/context';
 import AddFriend from 'react-native-vector-icons/MaterialIcons';
 import SettingIcon from 'react-native-vector-icons/Ionicons';
+import messaging from '@react-native-firebase/messaging';
 
 const Home = ({navigation}) => {
+  useEffect(() => {
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      navigation.navigate('Chat', {
+        uid: remoteMessage.data.uid,
+        name: remoteMessage.data.name,
+        image: remoteMessage.data.image,
+        username: remoteMessage.data.username,
+      });
+    });
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      navigation.navigate('Chat', {
+        uid: remoteMessage.data.uid,
+        name: remoteMessage.data.name,
+        image: remoteMessage.data.image,
+        username: remoteMessage.data.username,
+      });
+    });
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          navigation.navigate('Chat', {
+            uid: remoteMessage.data.uid,
+            name: remoteMessage.data.name,
+            image: remoteMessage.data.image,
+            username: remoteMessage.data.username,
+          });
+        }
+      });
+    // const unsubscribe = messaging().onMessage(async remoteMessage => {
+    //   Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    // });
+
+    // return unsubscribe;
+  }, []);
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Home',

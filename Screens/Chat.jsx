@@ -101,6 +101,12 @@ const Chat = ({route, navigation}) => {
       .doc(route.params.uid)
       .get();
     const payload = {
+      data: {
+        name: contextData.data.name,
+        image: contextData.data.image,
+        uid: contextData.data.uid,
+        username: contextData.data.username,
+      },
       notification: {
         body: message ? message : 'Sent You An Image',
         title: contextData.data.name,

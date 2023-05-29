@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   FriendListViewName: {
-    fontSize: 18,
+    fontSize: 17,
     marginLeft: 12,
     color: 'black',
     fontFamily: 'Montserrat-SemiBold',
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 12,
     marginTop: 1,
-    color: '#00000080',
+    color: '#00000090',
     fontFamily: 'Montserrat-Medium',
   },
 });
