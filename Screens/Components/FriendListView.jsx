@@ -53,6 +53,23 @@ const FriendListView = props => {
         });
         setNotify();
       }}>
+      {data && notify === data.name && (
+        <View
+          style={{
+            backgroundColor: '#2563eb',
+            padding: 5,
+            borderTopRightRadius: 10,
+            borderBottomRightRadius: 10,
+            elevation: 10,
+            shadowOffset: -20,
+            width: 2,
+            right: 0,
+            bottom: 0,
+            position: 'absolute',
+            shadowColor: '#2563eb',
+            top: 0,
+          }}></View>
+      )}
       {data && (
         <FastImage
           style={styles.chatProfile}
@@ -62,22 +79,8 @@ const FriendListView = props => {
           }}
         />
       )}
-      <View style={{position: 'relative', width: '85%'}}>
+      <View>
         <Text style={styles.FriendListViewName}>{data && data.name}</Text>
-        {data && notify === data.name && (
-          <View
-            style={{
-              backgroundColor: '#2563eb',
-              padding: 6,
-              borderRadius: 50,
-              elevation: 10,
-              width: 4,
-              right: 2,
-              position: 'absolute',
-              shadowColor: '#2563eb',
-              top: 0,
-            }}></View>
-        )}
         <Text style={styles.FriendListViewLastMsg}>
           {data &&
           CryptoJS.AES.decrypt(props.chat[1].lastMessage, combinedId).toString(

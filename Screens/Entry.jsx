@@ -29,7 +29,6 @@ const Entry = ({navigation}) => {
         ...userData._data,
         uid: user.uid,
         name: user.displayName,
-        image: user.photoURL,
       });
       if (userData._exists) {
         navigation.reset({

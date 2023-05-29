@@ -34,7 +34,6 @@ const Profile = ({navigation}) => {
           }&size=512&rounded=true`,
       username: contextData.data.username,
     });
-    console.log(contextData.data);
   }, [contextData]);
 
   useLayoutEffect(() => {
