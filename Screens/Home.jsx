@@ -6,9 +6,6 @@ import {
   View,
   TouchableOpacity,
   Image,
-  Alert,
-  PermissionsAndroid,
-  ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
 import FriendListView from './Components/FriendListView';
@@ -18,42 +15,8 @@ import {UserContext} from '../Context/context';
 import AddFriend from 'react-native-vector-icons/MaterialIcons';
 import SettingIcon from 'react-native-vector-icons/Ionicons';
 import messaging from '@react-native-firebase/messaging';
-
 const Home = ({navigation}) => {
   const contextData = useContext(UserContext);
-  useEffect(() => {
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      navigation.navigate('Chat', {
-        uid: remoteMessage.data.uid,
-        name: remoteMessage.data.name,
-        image: remoteMessage.data.image,
-        username: remoteMessage.data.username,
-      });
-    });
-    messaging()
-      .getInitialNotification()
-      .then(async remoteMessage => {
-        if (remoteMessage) {
-          navigation.navigate('Chat', {
-            uid: remoteMessage.data.uid,
-            name: remoteMessage.data.name,
-            image: remoteMessage.data.image,
-            username: remoteMessage.data.username,
-          });
-        }
-      });
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      ToastAndroid.show(
-        `New Message From @${remoteMessage.data.username}`,
-        ToastAndroid.LONG,
-      );
-    });
-
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
     setTokenHandler();

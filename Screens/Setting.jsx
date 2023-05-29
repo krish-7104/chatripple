@@ -6,10 +6,12 @@ import {
   ToastAndroid,
   Linking,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useContext} from 'react';
 import auth from '@react-native-firebase/auth';
+import {UserContext} from '../Context/context';
 
 const Setting = ({navigation}) => {
+  const contextData = useContext(UserContext);
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
@@ -40,6 +42,7 @@ const Setting = ({navigation}) => {
     });
   }, [navigation]);
   const logoutHandler = () => {
+    contextData.setData({});
     auth()
       .signOut()
       .then(() => ToastAndroid.show('Logout Successfully', ToastAndroid.SHORT));
