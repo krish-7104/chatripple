@@ -71,7 +71,7 @@ const Login = ({navigation}) => {
             );
           } else if (error.code === 'auth/user-disabled') {
             ToastAndroid.show(
-              'User Disabled! Contact Developer',
+              'User Disabled, Contact Developer',
               ToastAndroid.SHORT,
             );
           } else {

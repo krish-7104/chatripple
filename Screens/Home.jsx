@@ -28,7 +28,7 @@ const Home = ({navigation}) => {
         username: remoteMessage.data.username,
       });
     });
-    messaging().onNotificationOpenedApp(remoteMessage => {
+    messaging().onNotificationOpenedApp(async remoteMessage => {
       navigation.navigate('Chat', {
         uid: remoteMessage.data.uid,
         name: remoteMessage.data.name,
@@ -38,7 +38,7 @@ const Home = ({navigation}) => {
     });
     messaging()
       .getInitialNotification()
-      .then(remoteMessage => {
+      .then(async remoteMessage => {
         if (remoteMessage) {
           navigation.navigate('Chat', {
             uid: remoteMessage.data.uid,
@@ -100,10 +100,10 @@ const Home = ({navigation}) => {
               activeOpacity={0.6}
               onPress={() => navigation.navigate('My Profile')}
               style={{marginRight: 14}}>
-              {contextData.data.image && (
+              {contextData.data && (
                 <Image
                   source={{
-                    uri: contextData.data.image,
+                    uri: contextData.data.image && contextData.data.image,
                   }}
                   style={styles.chatProfile}
                 />

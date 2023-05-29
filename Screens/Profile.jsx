@@ -186,7 +186,9 @@ const Profile = ({navigation}) => {
         <TextInput
           autoCapitalize="none"
           value={value.username}
-          onChangeText={text => setValue({...value, username: text})}
+          onChangeText={text =>
+            setValue({...value, username: text.toLowerCase()})
+          }
           style={styles.input}
         />
         <Text style={styles.labelText}>Display Name</Text>
