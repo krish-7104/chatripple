@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   PermissionsAndroid,
+  ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useContext, useState, useLayoutEffect} from 'react';
 import FriendListView from './Components/FriendListView';
@@ -44,6 +45,14 @@ const Home = ({navigation}) => {
           });
         }
       });
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      ToastAndroid.show(
+        `New Message From @${remoteMessage.data.username}`,
+        ToastAndroid.LONG,
+      );
+    });
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
