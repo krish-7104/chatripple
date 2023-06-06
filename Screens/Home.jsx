@@ -110,7 +110,17 @@ const Home = ({navigation}) => {
           alignItems: 'center',
           height: '100%',
         }}>
+        {chats && Object.entries(chats).length === 0 && (
+          <Text
+            style={{
+              fontFamily: 'Montserrat-Medium',
+              marginTop: 20,
+            }}>
+            Click On Below Add Friend Button To Add Friends
+          </Text>
+        )}
         {chats &&
+          Object.entries(chats).length !== 0 &&
           Object.entries(chats)
             ?.sort((a, b) => b[1].date - a[1].date)
             .map(chat => {

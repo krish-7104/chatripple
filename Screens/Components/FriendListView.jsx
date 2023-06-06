@@ -69,13 +69,23 @@ const FriendListView = props => {
           }}></View>
       )}
       {data && (
-        <FastImage
-          style={styles.chatProfile}
-          source={{
-            uri: data.image,
-            priority: FastImage.priority.normal,
-          }}
-        />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate('ImageViewer', {
+              image: data.image,
+              name: data.name,
+              username: data.username,
+            })
+          }>
+          <FastImage
+            style={styles.chatProfile}
+            source={{
+              uri: data.image,
+              priority: FastImage.priority.normal,
+            }}
+          />
+        </TouchableOpacity>
       )}
       <View>
         <Text style={styles.FriendListViewName}>{data && data.name}</Text>

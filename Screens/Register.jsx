@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ToastAndroid,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useState, useLayoutEffect} from 'react';
 import auth from '@react-native-firebase/auth';
