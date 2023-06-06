@@ -17,9 +17,10 @@ const SenderCont = ({chat, combinedId, image, name}) => {
         flexDirection: 'row',
         marginBottom: 28,
       }}>
-      <Image
+      <FastImage
         source={{
           uri: image,
+          priority: FastImage.priority.normal,
         }}
         style={styles.SenderProfile}
       />

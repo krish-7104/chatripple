@@ -15,6 +15,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import FastImage from 'react-native-fast-image';
 
 const Profile = ({navigation}) => {
   const contextData = useContext(UserContext);
@@ -158,8 +159,9 @@ const Profile = ({navigation}) => {
               username: value.username,
             })
           }>
-          <Image
+          <FastImage
             source={{
+              priority: FastImage.priority.normal,
               uri: value.image
                 ? value.image
                 : `https://ui-avatars.com/api/?name=Chat+Ripple&size=512&rounded=true`,

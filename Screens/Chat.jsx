@@ -313,6 +313,7 @@ const Chat = ({route, navigation}) => {
         <TouchableOpacity
           style={styles.sendBtns}
           activeOpacity={0.8}
+          onSubmitEditing={sendMessageHandler}
           onPress={!uploading && sendMessageHandler}>
           <SendIcon name="send-outline" color="black" size={24} />
         </TouchableOpacity>

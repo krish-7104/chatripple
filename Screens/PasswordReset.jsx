@@ -32,14 +32,17 @@ const PasswordReset = ({navigation}) => {
   const [email, setEmail] = useState();
   const [send, setSend] = useState(false);
   const resetLinkHandler = async () => {
-    try {
-      const res = await auth().sendPasswordResetEmail(email);
-      ToastAndroid.show(
-        'Reset Password Link Sent Successfully!',
-        ToastAndroid.LONG,
-      );
-    } catch (error) {
-      console.log(error);
+    if (email) {
+      try {
+        const res = await auth().sendPasswordResetEmail(email);
+        ToastAndroid.show(
+          'Reset Password Link Sent Successfully!',
+          ToastAndroid.LONG,
+        );
+        navigation.navigate('Login');
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   return (

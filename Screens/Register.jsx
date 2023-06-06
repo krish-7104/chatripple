@@ -19,6 +19,8 @@ const Register = ({navigation}) => {
     password: '',
     confirmPassword: '',
   });
+  const [loading, setLoading] = useState(false);
+
   const contextData = useContext(UserContext);
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -61,6 +63,7 @@ const Register = ({navigation}) => {
         uid,
         image: '',
       });
+      setLoading(false);
       navigation.replace('My Profile');
     } catch (error) {
       console.log(error);
@@ -76,6 +79,7 @@ const Register = ({navigation}) => {
           .createUserWithEmailAndPassword(value.email, value.password)
           .then(e => {
             Keyboard.dismiss();
+            setLoading(true);
             saveChangesHandler(e.user.uid);
           })
           .catch(error => {
@@ -102,39 +106,52 @@ const Register = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.inputCont}>
-        <Text style={styles.labelText}>Email Address</Text>
-        <TextInput
-          value={value.email}
-          onChangeText={text => setValue({...value, email: text})}
-          style={styles.input}
-        />
-        <Text style={styles.labelText}>Password</Text>
-        <TextInput
-          secureTextEntry
-          value={value.password}
-          onChangeText={text => setValue({...value, password: text})}
-          style={styles.input}
-        />
-        <Text style={styles.labelText}>Confirm Password</Text>
-        <TextInput
-          secureTextEntry
-          value={value.confirmPassword}
-          onChangeText={text => setValue({...value, confirmPassword: text})}
-          style={styles.input}
-        />
-      </View>
-      <TouchableOpacity
-        style={styles.btnCont}
-        activeOpacity={0.4}
-        onPress={registerHandler}>
-        <Text style={styles.btnText}>Create Account</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        activeOpacity={0.4}
-        onPress={() => navigation.replace('Login')}>
-        <Text style={styles.alreadyText}>Already Have An Account?</Text>
-      </TouchableOpacity>
+      {!loading && (
+        <>
+          <View style={styles.inputCont}>
+            <Text style={styles.labelText}>Email Address</Text>
+            <TextInput
+              value={value.email}
+              onChangeText={text => setValue({...value, email: text})}
+              style={styles.input}
+            />
+            <Text style={styles.labelText}>Password</Text>
+            <TextInput
+              secureTextEntry
+              value={value.password}
+              onChangeText={text => setValue({...value, password: text})}
+              style={styles.input}
+            />
+            <Text style={styles.labelText}>Confirm Password</Text>
+            <TextInput
+              secureTextEntry
+              value={value.confirmPassword}
+              onChangeText={text => setValue({...value, confirmPassword: text})}
+              style={styles.input}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.btnCont}
+            activeOpacity={0.4}
+            onPress={registerHandler}>
+            <Text style={styles.btnText}>Create Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.4}
+            onPress={() => navigation.replace('Login')}>
+            <Text style={styles.alreadyText}>Already Have An Account?</Text>
+          </TouchableOpacity>
+        </>
+      )}
+      {loading && (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator
+            size="large"
+            color="#2563eb"
+            style={{paddingHorizontal: 10, paddingVertical: 6}}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

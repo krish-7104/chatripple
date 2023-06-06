@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ToastAndroid,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useLayoutEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -19,6 +20,7 @@ const Login = ({navigation}) => {
     password: '',
   });
   const contextData = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Second Page',
@@ -44,6 +46,7 @@ const Login = ({navigation}) => {
     if (!user1._exists) {
       firestore().collection('userChats').doc(uid).set({});
     }
+    setLoading(false);
     navigation.reset({
       index: 0,
       routes: [{name: 'Home'}],
@@ -55,6 +58,8 @@ const Login = ({navigation}) => {
       auth()
         .signInWithEmailAndPassword(value.email, value.password)
         .then(res => {
+          Keyboard.dismiss();
+          setLoading(true);
           getDataFromFirebase(res.user.uid);
         })
         .catch(error => {
@@ -87,38 +92,51 @@ const Login = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.inputCont}>
-        <Text style={styles.labelText}>Email Address</Text>
-        <TextInput
-          autoCapitalize="none"
-          value={value.email}
-          onChangeText={text => setValue({...value, email: text})}
-          style={styles.input}
-        />
-        <Text style={styles.labelText}>Password</Text>
-        <TextInput
-          secureTextEntry
-          value={value.password}
-          onChangeText={text => setValue({...value, password: text})}
-          style={styles.input}
-        />
-      </View>
-      <TouchableOpacity
-        activeOpacity={0.4}
-        onPress={() => navigation.navigate('Reset Password')}>
-        <Text style={styles.forgetText}>Forget Password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.btnCont}
-        activeOpacity={0.4}
-        onPress={loginHandler}>
-        <Text style={styles.btnText}>Login Now!</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        activeOpacity={0.4}
-        onPress={() => navigation.replace('Register')}>
-        <Text style={styles.alreadyText}>Don't Have An Account?</Text>
-      </TouchableOpacity>
+      {!loading && (
+        <>
+          <View style={styles.inputCont}>
+            <Text style={styles.labelText}>Email Address</Text>
+            <TextInput
+              autoCapitalize="none"
+              value={value.email}
+              onChangeText={text => setValue({...value, email: text})}
+              style={styles.input}
+            />
+            <Text style={styles.labelText}>Password</Text>
+            <TextInput
+              secureTextEntry
+              value={value.password}
+              onChangeText={text => setValue({...value, password: text})}
+              style={styles.input}
+            />
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.4}
+            onPress={() => navigation.navigate('Reset Password')}>
+            <Text style={styles.forgetText}>Forget Password?</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btnCont}
+            activeOpacity={0.4}
+            onPress={loginHandler}>
+            <Text style={styles.btnText}>Login Now!</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.4}
+            onPress={() => navigation.replace('Register')}>
+            <Text style={styles.alreadyText}>Don't Have An Account?</Text>
+          </TouchableOpacity>
+        </>
+      )}
+      {loading && (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator
+            size="large"
+            color="#2563eb"
+            style={{paddingHorizontal: 10, paddingVertical: 6}}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

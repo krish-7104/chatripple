@@ -15,14 +15,15 @@ import FastImage from 'react-native-fast-image';
 import messaging from '@react-native-firebase/messaging';
 
 const FriendListView = props => {
-  const [notify, setNotify] = useState();
+  const contextData = useContext(UserContext);
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      setNotify(remoteMessage.notification.title);
+      if (!contextData.notify.includes(remoteMessage.notification.title)) {
+        contextData.setNotify(e => [...e, remoteMessage.notification.title]);
+      }
     });
     return unsubscribe;
   }, []);
-  const contextData = useContext(UserContext);
   let combinedId =
     props.chat[1].userInfo.uid > contextData.data.uid
       ? props.chat[1].userInfo.uid + contextData.data.uid
@@ -51,23 +52,20 @@ const FriendListView = props => {
           image: data.image,
           username: data.username,
         });
-        setNotify();
+        contextData.setNotify(contextData.notify.filter(e => e !== data.name));
       }}>
-      {data && notify === data.name && (
+      {data && contextData.notify.includes(data.name) && (
         <View
           style={{
             backgroundColor: '#2563eb',
-            padding: 5,
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 10,
-            elevation: 10,
-            shadowOffset: -20,
-            width: 2,
-            right: 0,
-            bottom: 0,
+            width: 13,
+            height: 13,
+            right: 12,
+            top: 12,
             position: 'absolute',
             shadowColor: '#2563eb',
-            top: 0,
+            borderRadius: 50,
+            elevation: 30,
           }}></View>
       )}
       {data && (
