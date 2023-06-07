@@ -115,8 +115,11 @@ const Home = ({navigation}) => {
             style={{
               fontFamily: 'Montserrat-Medium',
               marginTop: 20,
+              width: '80%',
+              textAlign: 'center',
+              color: '#00000080',
             }}>
-            Click On Below Add Friend Button To Add Friends
+            Click On Add Friend Button To Add Friends
           </Text>
         )}
         {chats &&

@@ -90,6 +90,14 @@ const Chat = ({route, navigation}) => {
     });
   }, [navigation]);
 
+  useEffect(() => {
+    if (contextData.notify.includes(route.params.name)) {
+      contextData.setNotify(
+        contextData.notify.filter(e => e !== route.params.name),
+      );
+    }
+  }, [contextData.notify]);
+
   let combinedId =
     route.params.uid > contextData.data.uid
       ? route.params.uid + contextData.data.uid
