@@ -141,7 +141,7 @@ const Chat = ({route, navigation}) => {
 
   const sendMessageHandler = () => {
     if (message) {
-      sendNotification('text');
+      sendNotification();
       let encryptMessage = CryptoJS.AES.encrypt(message, combinedId).toString();
       firestore()
         .collection('chats')
@@ -176,7 +176,7 @@ const Chat = ({route, navigation}) => {
       'Sent You An Image',
       combinedId,
     ).toString();
-    sendNotification('media');
+    sendNotification();
     firestore()
       .collection('chats')
       .doc(combinedId)
